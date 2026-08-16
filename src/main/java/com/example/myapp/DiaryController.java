@@ -1,9 +1,12 @@
 package com.example.myapp;
 
-import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -21,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class DiaryController {
 
     private static final Logger log = LoggerFactory.getLogger(DiaryController.class);
+    private static final int DIARIES_PER_PAGE = 7;
 
     private final DiaryRepository diaryRepository;
     private final UserService userService;
@@ -44,7 +48,7 @@ public class DiaryController {
 
     /**
      * 新規日記を登録します。
-     * 登録前に本文のバリデーションを実行し、登録後は共通通知モーダルを表示します。
+     * 登録前に文字数と感謝・ポジティブ表現のバリデーションを実行します。
      *
      * @param title 日記タイトル
      * @param content 日記本文
@@ -66,6 +70,26 @@ public class DiaryController {
 
         final User user = userService.findByUsername(username);
 
+        // 新規登録時も編集時も同じ文字数制限を適用します。
+        if (!diaryValidationService.isValidTitleLength(title)
+                || !diaryValidationService.isValidContentLength(content)) {
+
+            log.warn("日記の文字数制限に違反しました。ユーザー: {}", username);
+
+            model.addAttribute(
+                    "errorMessage",
+                    "入力できる文字数を超えています。\n\n"
+                            + "タイトル：100文字以内\n"
+                            + "本文：2000文字以内");
+
+            model.addAttribute("title", title);
+            model.addAttribute("content", content);
+            setupIndexModel(model, user, username);
+
+            return "index";
+        }
+
+        // 日記本文に感謝・ポジティブ表現が含まれているか確認します。
         if (!diaryValidationService.containsGratitude(content)) {
             log.warn("日記のバリデーションに失敗しました。ユーザー: {}", username);
 
@@ -100,22 +124,25 @@ public class DiaryController {
 
     /**
      * メイン画面を表示し、ログインユーザー本人の日記だけを一覧表示します。
+     * 日記は1ページあたり7件、更新日時の新しい順に取得します。
      *
+     * @param page 表示するページ番号
      * @param model 画面表示用データ
      * @param authentication ログインユーザー情報
      * @return 日記一覧画面
      */
     @GetMapping("/")
     public String index(
+            @RequestParam(defaultValue = "0") final int page,
             final Model model,
             final Authentication authentication) {
 
         final String username = authentication.getName();
         final User user = userService.findByUsername(username);
 
-        log.debug("日記一覧を取得します。ユーザー: {}", username);
+        log.debug("日記一覧を取得します。ユーザー: {}, ページ: {}", username, page);
 
-        setupIndexModel(model, user, username);
+        setupIndexModel(model, user, username, page);
 
         return "index";
     }
@@ -154,7 +181,7 @@ public class DiaryController {
 
     /**
      * 指定された日記を更新します。
-     * 更新前にも新規登録時と同じバリデーションを実行します。
+     * 新規登録時と同じ文字数制限と本文バリデーションを実行します。
      *
      * @param id 日記ID
      * @param title 日記タイトル
@@ -181,6 +208,19 @@ public class DiaryController {
             return ResponseEntity.notFound().build();
         }
 
+        // 新規登録時と同じ文字数制限を編集時にも適用します。
+        if (!diaryValidationService.isValidTitleLength(title)
+                || !diaryValidationService.isValidContentLength(content)) {
+
+            log.warn("日記の文字数制限に違反しました。ID: {}, ユーザー: {}", id, username);
+
+            return ResponseEntity.badRequest().body(
+                    "入力できる文字数を超えています。\n\n"
+                            + "タイトル：100文字以内\n"
+                            + "本文：2000文字以内");
+        }
+
+        // 新規登録時と同じ感謝・ポジティブ表現のチェックを行います。
         if (!diaryValidationService.containsGratitude(content)) {
             return ResponseEntity.badRequest().body(
                     "日記には感謝の気持ちを含めてください。\n\n"
@@ -206,7 +246,38 @@ public class DiaryController {
 
     /**
      * 日記一覧画面に必要なデータをModelへ設定します。
-     * ユーザー自身の日記だけを取得することで、他ユーザーの日記が表示されることを防ぎます。
+     * ログインユーザー自身の日記だけを対象にし、1ページあたり7件で
+     * 更新日時の新しい順に取得します。
+     *
+     * @param model 画面表示用データ
+     * @param user ログインユーザー
+     * @param username ログインユーザー名
+     * @param page 表示するページ番号
+     */
+    private void setupIndexModel(
+            final Model model,
+            final User user,
+            final String username,
+            final int page) {
+
+        final int safePage = Math.max(page, 0);
+        final Pageable pageable = PageRequest.of(
+                safePage,
+                DIARIES_PER_PAGE,
+                Sort.by(Sort.Direction.DESC, "updatedAt"));
+
+        final Page<Diary> diaryPage = diaryRepository.findByUser(user, pageable);
+
+        model.addAttribute("diaries", diaryPage.getContent());
+        model.addAttribute("currentPage", diaryPage.getNumber());
+        model.addAttribute("totalPages", diaryPage.getTotalPages());
+        model.addAttribute("username", username);
+    }
+
+    /**
+     * バリデーションエラー時の日記一覧を7件表示するための
+     * Modelデータを設定します。
+     * 新規登録フォームから戻った場合は先頭ページを表示します。
      *
      * @param model 画面表示用データ
      * @param user ログインユーザー
@@ -216,10 +287,6 @@ public class DiaryController {
             final Model model,
             final User user,
             final String username) {
-
-        final List<Diary> diaries = diaryRepository.findByUser(user);
-
-        model.addAttribute("diaries", diaries);
-        model.addAttribute("username", username);
+        setupIndexModel(model, user, username, 0);
     }
 }

@@ -1,6 +1,6 @@
 /**
  * 日記アプリ共通JavaScript。
- * 共通通知モーダルと日記編集機能を管理します。
+ * 通知モーダル、日記入力フォーム、日記編集機能を管理します。
  */
 
 /**
@@ -46,62 +46,63 @@ function showNotification(message, type = "reload") {
 }
 
 /**
- * サーバーから渡された通知メッセージを確認し、
- * メッセージが存在する場合は共通通知モーダルで表示します。
+ * 日記入力フォームを開閉し、ボタンの表示を切り替えます。
+ */
+function toggleDiaryForm() {
+    const form = document.getElementById("diaryWriteForm");
+    const text = document.getElementById("diaryFormToggleText");
+    const icon = document.getElementById("diaryFormToggleIcon");
+
+    if (!form || !text || !icon) {
+        console.error("日記入力フォームのHTML要素が見つかりません。");
+        return;
+    }
+
+    const isOpen = form.style.display === "block";
+
+    if (isOpen) {
+        form.style.display = "none";
+        text.textContent = "日記を書く";
+        icon.textContent = "▼";
+    } else {
+        form.style.display = "block";
+        text.textContent = "日記を閉じる";
+        icon.textContent = "▲";
+    }
+}
+
+/**
+ * ページ読み込み後にサーバーから渡された通知メッセージを確認します。
  */
 document.addEventListener("DOMContentLoaded", function () {
-    const registerSuccessMessage =
-        document.getElementById("registerSuccessMessage");
-
-    const registerErrorMessage =
-        document.getElementById("registerErrorMessage");
-
-    const diaryErrorMessage =
-        document.getElementById("diaryErrorMessage");
-
-    const diarySuccessMessage =
-        document.getElementById("diarySuccessMessage");
-
-    const loginErrorMessage =
-        document.getElementById("loginErrorMessage");
+    const registerSuccessMessage = document.getElementById("registerSuccessMessage");
+    const registerErrorMessage = document.getElementById("registerErrorMessage");
+    const diaryErrorMessage = document.getElementById("diaryErrorMessage");
+    const diarySuccessMessage = document.getElementById("diarySuccessMessage");
+    const loginErrorMessage = document.getElementById("loginErrorMessage");
 
     if (registerSuccessMessage) {
-        showNotification(
-            registerSuccessMessage.textContent.trim(),
-            "login"
-        );
+        showNotification(registerSuccessMessage.textContent.trim(), "login");
         return;
     }
 
     if (registerErrorMessage) {
-        showNotification(
-            registerErrorMessage.textContent.trim(),
-            "register"
-        );
+        showNotification(registerErrorMessage.textContent.trim(), "register");
         return;
     }
 
     if (loginErrorMessage) {
-        showNotification(
-            loginErrorMessage.textContent.trim(),
-            "stay"
-        );
+        showNotification(loginErrorMessage.textContent.trim(), "stay");
         return;
     }
 
     if (diaryErrorMessage) {
-        showNotification(
-            diaryErrorMessage.textContent.trim(),
-            "stay"
-        );
+        showNotification(diaryErrorMessage.textContent.trim(), "stay");
         return;
     }
 
     if (diarySuccessMessage) {
-        showNotification(
-            diarySuccessMessage.textContent.trim(),
-            "reload"
-        );
+        showNotification(diarySuccessMessage.textContent.trim(), "reload");
     }
 });
 
@@ -118,14 +119,16 @@ async function openEditModal(button) {
     const editForm = document.getElementById("editForm");
     const errorMessage = document.getElementById("editErrorMessage");
 
+    if (!modal || !titleInput || !contentInput || !editForm) {
+        console.error("日記編集用のHTML要素が見つかりません。");
+        return;
+    }
+
     try {
         const response = await fetch(`/api/diary/${id}`);
 
         if (!response.ok) {
-            showNotification(
-                "日記を取得できませんでした。",
-                "stay"
-            );
+            showNotification("日記を取得できませんでした。", "stay");
             return;
         }
 
@@ -134,25 +137,21 @@ async function openEditModal(button) {
         titleInput.value = diary.title;
         contentInput.value = diary.content;
         editForm.dataset.id = diary.id;
-        errorMessage.textContent = "";
+
+        if (errorMessage) {
+            errorMessage.textContent = "";
+        }
 
         modal.style.display = "block";
         modal.setAttribute("aria-hidden", "false");
     } catch (error) {
-        console.error(
-            "日記の取得中にエラーが発生しました。",
-            error
-        );
-
-        showNotification(
-            "日記の取得中にエラーが発生しました。",
-            "stay"
-        );
+        console.error("日記の取得中にエラーが発生しました。", error);
+        showNotification("日記の取得中にエラーが発生しました。", "stay");
     }
 }
 
 /**
- * 日記編集フォームの送信処理を設定します。
+ * 日記編集フォームの非同期更新処理を設定します。
  */
 document.addEventListener("DOMContentLoaded", function () {
     const editForm = document.getElementById("editForm");
@@ -177,8 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch(`/api/diary/${id}`, {
                 method: "POST",
                 headers: {
-                    "Content-Type":
-                        "application/x-www-form-urlencoded",
+                    "Content-Type": "application/x-www-form-urlencoded",
                     "X-CSRF-TOKEN": csrfToken
                 },
                 body: formData
@@ -186,30 +184,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!response.ok) {
                 const message = await response.text();
-
-                showNotification(
-                    message,
-                    "stay"
-                );
+                showNotification(message, "stay");
                 return;
             }
 
             closeEditModal();
-
-            showNotification(
-                `日記「${title}」を更新しました。`,
-                "reload"
-            );
+            showNotification(`日記「${title}」を更新しました。`, "reload");
         } catch (error) {
-            console.error(
-                "日記の更新中にエラーが発生しました。",
-                error
-            );
-
-            showNotification(
-                "日記の更新中にエラーが発生しました。",
-                "stay"
-            );
+            console.error("日記の更新中にエラーが発生しました。", error);
+            showNotification("日記の更新中にエラーが発生しました。", "stay");
         }
     });
 });

@@ -70,6 +70,21 @@ body.register-page .register-container {
   box-shadow: 0 8px 24px rgba(76, 175, 80, 0.1);
 }
 
+/* ログイン・新規登録画面にアプリ名を表示します。 */
+.app-brand {
+  margin-bottom: 20px;
+  color: var(--color-primary-dark);
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* 新規登録画面ではアプリ名にも登録画面の専用カラーを使用します。 */
+body.register-page .app-brand {
+  color: #3f9142;
+}
+
 /* 日記画面のヘッダーをカードとして表示し、左右に要素を配置します。 */
 .site-header {
   display: flex;
@@ -131,6 +146,28 @@ body:has(table) .container {
   box-shadow: 0 8px 24px rgba(44, 74, 62, 0.06);
 }
 
+/* ログイン・新規登録画面のアプリ名を表示します。 */
+.app-title {
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* アプリ名をログイン・新規登録画面で統一した色にします。 */
+.app-title-main {
+  color: var(--color-primary-dark) !important;
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* アプリの説明を小さく表示します。 */
+.app-title-sub {
+  margin-top: 4px;
+  color: var(--color-muted) !important;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
 /* メイン見出しのサイズ、色、下線、余白を設定します。 */
 h1 {
   margin-bottom: 25px;
@@ -158,6 +195,76 @@ h3 {
 /* 編集モーダルの見出しはカード上端から余計な余白を作りません。 */
 .modal-content > h2 {
   margin-top: 0;
+}
+
+/* 日記入力フォームの開閉ボタンをプルダウン風に表示します。 */
+.diary-form-toggle {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 16px 20px !important;
+  color: var(--color-primary-dark) !important;
+  font-family: inherit !important;
+  font-size: 1.05rem !important;
+  font-weight: bold !important;
+  text-align: left !important;
+  background-color: var(--color-form-background) !important;
+  border: 2px solid var(--color-border) !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+}
+
+/* 日記入力フォームの開閉ボタンにマウスを重ねたときの表示を設定します。 */
+.diary-form-toggle:hover {
+  background-color: #eaf2e9 !important;
+  border-color: var(--color-primary-light) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* プルダウンの矢印を見やすく配置します。 */
+.toggle-icon {
+  margin-left: 15px;
+  font-size: 0.85rem;
+  transition: transform 0.2s ease;
+}
+
+/* 日記入力フォームを閉じた状態では表示しません。 */
+.diary-form-container {
+  display: none;
+  margin-top: 10px;
+}
+
+/* 日記入力フォームを開いたときのフォーム領域を表示します。 */
+.diary-form-container form {
+  margin: 0;
+}
+
+/* 入力フォームを閉じるボタンをプルダウンの操作として表示します。 */
+.diary-form-close {
+  display: block !important;
+  width: 100% !important;
+  margin: 10px 0 0 !important;
+  padding: 10px !important;
+  color: var(--color-primary-dark) !important;
+  font-family: inherit !important;
+  font-size: 0.9rem !important;
+  font-weight: bold !important;
+  background-color: transparent !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+}
+
+/* 入力フォームを閉じるボタンのホバー状態を設定します。 */
+.diary-form-close:hover {
+  background-color: var(--color-form-background) !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 /* 通常リンクを緑色のテキストリンクとして表示します。 */
@@ -460,6 +567,42 @@ td button:hover {
   text-align: center !important;
 }
 
+/* ページネーションを中央に配置します。 */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* ページネーションの操作ボタンを表示します。 */
+.pagination-button {
+  display: inline-block;
+  margin: 0 !important;
+  padding: 8px 18px;
+  color: var(--color-white) !important;
+  font-size: 0.9rem;
+  font-weight: bold;
+  background-color: var(--color-primary-light);
+  border: none !important;
+  border-radius: 20px;
+  box-shadow: 0 3px 0 var(--color-primary-dark);
+}
+
+/* ページネーションボタンのホバー状態を設定します。 */
+.pagination-button:hover {
+  color: var(--color-white) !important;
+  background-color: #7cb55e;
+  border-bottom: none !important;
+}
+
+/* 現在のページ番号を表示します。 */
+.pagination-info {
+  color: var(--color-primary-dark);
+  font-weight: bold;
+}
+
 /* 編集モーダルを画面全体に重ねて表示します。 */
 .modal {
   display: none;
@@ -657,6 +800,11 @@ td button:hover {
     border-left-width: 6px;
   }
 
+  .app-brand {
+    margin-bottom: 16px;
+    font-size: 1.55rem;
+  }
+
   .site-header {
     display: block;
     padding: 20px;
@@ -680,6 +828,10 @@ td button:hover {
   body:has(table) .container {
     padding: 20px;
     border-left-width: 6px;
+  }
+
+  .diary-form-toggle {
+    padding: 14px 16px !important;
   }
 
   .diary-write-section form {
@@ -825,6 +977,10 @@ td button:hover {
 
   .site-header {
     padding: 18px;
+  }
+
+  .app-brand {
+    font-size: 1.4rem;
   }
 
   tbody tr {
