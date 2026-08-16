@@ -1,0 +1,648 @@
+@charset "UTF-8";
+
+/* アプリ全体で使用する色をCSS変数として定義します。 */
+:root {
+  --color-background: #f9f8f3;
+  --color-text: #2c4a3e;
+  --color-primary: #4a7c59;
+  --color-primary-dark: #386641;
+  --color-primary-light: #6a994e;
+  --color-button-light: #a7c957;
+  --color-button-hover: #b7dc67;
+  --color-muted: #a3b19b;
+  --color-border: #b5c4b1;
+  --color-error: #bc4749;
+  --color-error-background: #fdf0f0;
+  --color-form-background: #f2f7f2;
+  --color-white: #ffffff;
+}
+
+/* 全要素のサイズ計算と標準余白を統一します。 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ページ全体の基準文字サイズを設定します。 */
+html {
+  font-size: 16px;
+}
+
+/* 全ページ共通の背景、文字色、フォント、行間を設定します。 */
+body {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+  line-height: 1.8;
+}
+
+/* ログイン・新規登録画面ではbody自体をカード化せず、背景だけを設定します。 */
+body.login-page,
+body.register-page {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 40px 20px !important;
+  background-color: var(--color-background) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ログイン・新規登録画面の入力エリアを中央カードとして表示します。 */
+body.login-page .container,
+body.register-page .register-container {
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: var(--color-white);
+  border-left: 8px solid var(--color-primary);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(44, 74, 62, 0.06);
+}
+
+/* 新規登録画面では専用カラーを使用します。 */
+body.register-page .register-container {
+  border-left-color: #4caf50;
+  box-shadow: 0 8px 24px rgba(76, 175, 80, 0.1);
+}
+
+/* 日記画面のヘッダーをカードとして表示し、左右に要素を配置します。 */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1000px;
+  margin: 0 auto 25px;
+  padding: 30px;
+  background-color: var(--color-white);
+  border-left: 8px solid var(--color-primary);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(44, 74, 62, 0.06);
+}
+
+/* ヘッダー見出しの標準余白を解除してログアウトボタンと位置を揃えます。 */
+.site-header h1 {
+  margin: 0;
+}
+
+/* ログアウトフォームを通常フォームのデザイン対象から除外します。 */
+.site-header .logout-form {
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+}
+
+/* ログアウトボタンをヘッダー内に収まるコンパクトなボタンにします。 */
+.site-header .logout-form button {
+  display: inline-block !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 6px 14px !important;
+  color: var(--color-white) !important;
+  font-family: inherit !important;
+  font-size: 0.9rem !important;
+  background-color: #4caf50 !important;
+  border: none !important;
+  border-radius: 20px !important;
+  box-shadow: 0 3px 0 #3f9142 !important;
+}
+
+/* ログアウトボタンのホバー時に押下感を表現します。 */
+.site-header .logout-form button:hover {
+  background-color: #5fcf63 !important;
+  transform: translateY(2px) !important;
+  box-shadow: 0 1px 0 #3f9142 !important;
+}
+
+/* 日記画面のメインコンテンツを中央カードとして表示します。 */
+body:has(table) .container {
+  max-width: 1000px !important;
+  margin: 0 auto 40px !important;
+  padding: 30px;
+  background-color: var(--color-white) !important;
+  border-left: 8px solid var(--color-primary) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 24px rgba(44, 74, 62, 0.06);
+}
+
+/* メイン見出しのサイズ、色、下線、余白を設定します。 */
+h1 {
+  margin-bottom: 25px;
+  padding-bottom: 12px;
+  color: var(--color-primary-dark) !important;
+  font-size: 1.6rem;
+  border-bottom: 2px dashed var(--color-muted) !important;
+}
+
+/* セクション見出しの基本スタイルを設定します。 */
+h2,
+h3 {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  color: var(--color-primary-dark) !important;
+  font-size: 1.3rem;
+}
+
+/* 日記入力・一覧セクションの見出し上余白を調整します。 */
+.diary-write-section > h2,
+.diary-list-section > h2 {
+  margin-top: 12px;
+}
+
+/* 編集モーダルの見出しはカード上端から余計な余白を作りません。 */
+.modal-content > h2 {
+  margin-top: 0;
+}
+
+/* 通常リンクを緑色のテキストリンクとして表示します。 */
+a {
+  display: inline-block;
+  margin-top: 32px !important;
+  color: var(--color-primary) !important;
+  font-weight: bold;
+  text-decoration: none !important;
+  border-bottom: 1px dashed var(--color-primary) !important;
+}
+
+/* リンクのホバー時に色と下線を変更します。 */
+a:hover {
+  color: var(--color-primary-light) !important;
+  border-bottom-style: solid !important;
+}
+
+/* 通常フォームの背景と角丸を設定します。 */
+form:not([action*="logout"]):not(#editForm) {
+  padding: 24px !important;
+  background-color: var(--color-form-background) !important;
+  border-radius: 16px !important;
+}
+
+/* フォーム内のbrによる不要な改行を無効化します。 */
+form br {
+  display: none !important;
+}
+
+/* フォーム内の入力項目間に一定の間隔を設定します。 */
+form div {
+  margin-bottom: 15px !important;
+}
+
+/* ラベルを入力欄の上に配置します。 */
+label {
+  display: block !important;
+  margin-bottom: 8px !important;
+  color: var(--color-primary-dark) !important;
+  font-size: 0.95rem !important;
+  font-weight: bold !important;
+}
+
+/* テキスト入力、パスワード入力、本文入力のデザインを統一します。 */
+input[type="text"],
+input[type="password"],
+textarea {
+  display: block !important;
+  width: 100% !important;
+  margin-top: 8px !important;
+  padding: 12px !important;
+  color: var(--color-text) !important;
+  font-family: inherit !important;
+  font-size: 1rem !important;
+  background-color: var(--color-white) !important;
+  border: 2px solid var(--color-muted) !important;
+  border-radius: 12px !important;
+  outline: none !important;
+}
+
+/* 本文入力欄の最低高さとサイズ変更方向を設定します。 */
+textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+/* 入力欄のフォーカス状態を視認しやすくします。 */
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+  background-color: #fdfdfb !important;
+  border-color: var(--color-primary-light) !important;
+}
+
+/* 通常の送信ボタンを共通デザインにします。 */
+button,
+button[type="submit"],
+input[type="submit"] {
+  display: block !important;
+  width: 100% !important;
+  margin-top: 32px !important;
+  padding: 12px !important;
+  color: var(--color-white) !important;
+  font-family: inherit !important;
+  font-size: 1rem !important;
+  font-weight: bold !important;
+  background-color: var(--color-primary-light) !important;
+  border: none !important;
+  border-radius: 30px !important;
+  box-shadow: 0 4px 0 var(--color-primary-dark) !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s, transform 0.1s, box-shadow 0.1s;
+}
+
+/* ボタンのホバー時に押下感を表現します。 */
+button:hover,
+button[type="submit"]:hover,
+input[type="submit"]:hover {
+  background-color: #7cb55e !important;
+  transform: translateY(2px) !important;
+  box-shadow: 0 2px 0 var(--color-primary-dark) !important;
+}
+
+/* 新規登録画面の見出しとラベルを専用カラーに変更します。 */
+body.register-page .register-container h1,
+body.register-page label {
+  color: #3f9142 !important;
+}
+
+/* 新規登録画面の見出し下線を専用カラーに変更します。 */
+body.register-page .register-container h1 {
+  border-bottom-color: #8bcf70 !important;
+}
+
+/* 新規登録フォームの背景色を設定します。 */
+body.register-page form {
+  background-color: #f7fbf5 !important;
+}
+
+/* 新規登録画面の入力欄に専用カラーを使用します。 */
+body.register-page input[type="text"],
+body.register-page input[type="password"] {
+  background-color: var(--color-white) !important;
+  border-color: #8bcf70 !important;
+}
+
+/* 新規登録画面の入力フォーカス状態を設定します。 */
+body.register-page input[type="text"]:focus,
+body.register-page input[type="password"]:focus {
+  background-color: #fbfff9 !important;
+  border-color: #4caf50 !important;
+}
+
+/* 新規登録ボタンを専用カラーに変更します。 */
+body.register-page button[type="submit"] {
+  background-color: #62b84f !important;
+  box-shadow: 0 4px 0 #3f9142 !important;
+}
+
+/* 新規登録ボタンのホバー状態を設定します。 */
+body.register-page button[type="submit"]:hover {
+  background-color: #76c95f !important;
+  box-shadow: 0 2px 0 #3f9142 !important;
+}
+
+/* 新規登録画面のリンクを専用カラーに変更します。 */
+body.register-page a {
+  color: #4d9f45 !important;
+  border-bottom-color: #78bd6b !important;
+}
+
+/* 新規登録画面のリンクのホバー状態を設定します。 */
+body.register-page a:hover {
+  color: #358438 !important;
+}
+
+/* 日記一覧を狭い画面でも確認できるよう横スクロールを許可します。 */
+.table-responsive,
+.table-wrapper {
+  width: 100% !important;
+  overflow-x: auto !important;
+}
+
+/* 日記一覧テーブルの幅と列幅を安定させます。 */
+table {
+  width: 100% !important;
+  margin-top: 15px !important;
+  margin-bottom: 30px !important;
+  table-layout: fixed !important;
+  font-size: 0.95rem !important;
+  background-color: var(--color-white) !important;
+  border: none !important;
+  border-collapse: collapse !important;
+}
+
+/* 日記一覧の各列幅を設定します。 */
+th:nth-child(1),
+td:nth-child(1) {
+  width: 15%;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  width: 15%;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+  width: 25%;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+  width: 33%;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+  width: 12%;
+}
+
+/* テーブルセルの左右余白と縦方向の位置を統一します。 */
+th,
+td {
+  padding-right: 12px !important;
+  padding-left: 12px !important;
+  vertical-align: middle !important;
+}
+
+/* テーブル見出しを濃い緑色で表示します。 */
+th {
+  height: 50px !important;
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
+  color: var(--color-white) !important;
+  font-weight: bold !important;
+  text-align: left !important;
+  background-color: var(--color-primary-dark) !important;
+  border: none !important;
+  border-bottom: 3px solid var(--color-text) !important;
+}
+
+/* 操作列を中央揃えにします。 */
+th:nth-child(5),
+td:nth-child(5) {
+  text-align: center !important;
+}
+
+/* テーブル上端の角を丸くします。 */
+th:first-child {
+  border-top-left-radius: 8px !important;
+}
+
+th:last-child {
+  border-top-right-radius: 8px !important;
+}
+
+/* 日記データセルを白背景と下線で表示します。 */
+td {
+  height: 50px !important;
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
+  color: var(--color-text) !important;
+  text-align: left !important;
+  background-color: var(--color-white) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  word-wrap: break-word !important;
+}
+
+/* 日記タイトルを本文より強調します。 */
+td:nth-child(3) {
+  color: var(--color-primary-dark);
+  font-weight: bold;
+}
+
+/* マウスオーバーした日記行を強調します。 */
+tbody tr:hover td {
+  background-color: #f4f7f4 !important;
+}
+
+/* 編集ボタンを操作列に収まるサイズに調整します。 */
+td button {
+  display: block !important;
+  width: 100% !important;
+  max-width: 70px !important;
+  margin: 0 auto !important;
+  padding: 6px 0 !important;
+  color: var(--color-text) !important;
+  font-family: inherit !important;
+  font-size: 0.85rem !important;
+  text-align: center !important;
+  background-color: var(--color-button-light) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 2px 0 var(--color-primary-light) !important;
+}
+
+/* 編集ボタンのホバー状態を設定します。 */
+td button:hover {
+  background-color: var(--color-button-hover) !important;
+  box-shadow: 0 1px 0 var(--color-primary-light) !important;
+}
+
+/* 日記が存在しない場合のメッセージを中央に表示します。 */
+.empty-message {
+  padding: 20px !important;
+  color: #718069 !important;
+  text-align: center !important;
+}
+
+/* 編集モーダルを画面全体に重ねて表示します。 */
+.modal {
+  display: none;
+  position: fixed !important;
+  z-index: 1000 !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background-color: rgba(44, 74, 62, 0.4) !important;
+  overflow-y: auto !important;
+}
+
+/* 編集モーダルを中央のカードとして表示します。 */
+.modal-content {
+  position: relative !important;
+  width: 90% !important;
+  max-width: 500px !important;
+  margin: 60px auto !important;
+  padding: 30px !important;
+  background-color: var(--color-white) !important;
+  border-left: 10px solid var(--color-primary) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 12px 36px rgba(44, 74, 62, 0.2) !important;
+}
+
+/* 編集モーダル内の入力項目間の余白を調整します。 */
+.modal-content form div {
+  margin-bottom: 20px !important;
+  padding: 0 !important;
+  background: none !important;
+}
+
+/* 更新・キャンセルボタンを横並びに配置します。 */
+.modal-content form button {
+  display: inline-block !important;
+  width: calc(50% - 8px) !important;
+  margin-top: 20px !important;
+  margin-right: 12px !important;
+}
+
+/* キャンセルボタンを更新ボタンと区別します。 */
+.modal-content form button:last-child {
+  margin-right: 0 !important;
+  background-color: var(--color-muted) !important;
+  box-shadow: 0 4px 0 #718069 !important;
+}
+
+/* キャンセルボタンのホバー状態を設定します。 */
+.modal-content form button:last-child:hover {
+  background-color: var(--color-border) !important;
+}
+
+/* 通知ポップアップを画面中央に配置します。 */
+.notification-modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  padding: 20px;
+  background-color: rgba(44, 74, 62, 0.45);
+  align-items: center;
+  justify-content: center;
+}
+
+/* aria-hidden=falseの通知ポップアップだけ表示します。 */
+.notification-modal[aria-hidden="false"] {
+  display: flex;
+}
+
+/* 通知内容を中央のカードとして表示します。 */
+.notification-modal-content {
+  width: 90%;
+  max-width: 460px;
+  padding: 35px 30px;
+  text-align: center;
+  background-color: var(--color-white);
+  border-left: 8px solid var(--color-primary);
+  border-radius: 20px;
+  box-shadow: 0 12px 36px rgba(44, 74, 62, 0.25);
+}
+
+/* 通知メッセージ内の改行を維持して表示します。 */
+#notificationMessage {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 1.05rem;
+  font-weight: bold;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+/* 通知ポップアップのOKボタンを中央配置します。 */
+#notificationOkButton {
+  display: block;
+  width: 140px;
+  margin: 25px auto 0;
+  padding: 10px 20px;
+  color: var(--color-white);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: var(--color-primary-light);
+  border: none;
+  border-radius: 30px;
+  box-shadow: 0 4px 0 var(--color-primary-dark);
+  cursor: pointer;
+}
+
+/* OKボタンのホバー時に押下感を表現します。 */
+#notificationOkButton:hover {
+  background-color: #7cb55e;
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--color-primary-dark);
+}
+
+/* 新規登録専用エラーを通知枠として表示します。 */
+.register-error-message {
+  display: block !important;
+  margin: 15px 0 !important;
+  padding: 12px 15px !important;
+  color: var(--color-error) !important;
+  font-size: 0.9rem !important;
+  font-weight: bold !important;
+  line-height: 1.6 !important;
+  background-color: var(--color-error-background) !important;
+  border-left: 5px solid var(--color-error) !important;
+  border-radius: 8px !important;
+}
+
+/* 通常のエラーメッセージを通知枠として表示します。 */
+.error-message:not(:empty) {
+  display: block !important;
+  margin: 15px 0 !important;
+  padding: 12px !important;
+  color: var(--color-error) !important;
+  font-size: 0.9rem !important;
+  font-weight: bold !important;
+  background-color: var(--color-error-background) !important;
+  border-left: 5px solid var(--color-error) !important;
+  border-radius: 8px !important;
+}
+
+/* エラーメッセージが空の場合は表示領域を作りません。 */
+.error-message:empty {
+  display: none !important;
+}
+
+/* タブレットではページ全体の余白と文字サイズを調整します。 */
+@media (max-width: 768px) {
+  body {
+    padding: 20px;
+  }
+
+  html {
+    font-size: 15px;
+  }
+}
+
+/* スマートフォンではカードとポップアップの余白を調整します。 */
+@media (max-width: 480px) {
+  body {
+    padding: 12px;
+  }
+
+  html {
+    font-size: 14px;
+  }
+
+  body.login-page,
+  body.register-page {
+    padding: 20px 12px !important;
+  }
+
+  body.login-page .container,
+  body.register-page .register-container {
+    padding: 24px 20px;
+    border-left-width: 6px;
+  }
+
+  .site-header {
+    padding: 24px 20px;
+    border-left-width: 6px;
+  }
+
+  .notification-modal {
+    padding: 12px;
+  }
+
+  .notification-modal-content {
+    width: 95%;
+    padding: 30px 20px;
+    border-left-width: 6px;
+  }
+
+  #notificationMessage {
+    font-size: 1rem;
+  }
+}

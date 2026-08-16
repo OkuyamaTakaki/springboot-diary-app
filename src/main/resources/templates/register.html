@@ -2,35 +2,53 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>新規登録</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規登録 - 日記アプリ</title>
+    <!-- アプリ全体で使用するフォントを読み込みます。 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- アプリ共通CSSを読み込みます。 -->
+    <link rel="stylesheet" th:href="@{/css/diary.css}">
 </head>
-<body>
+<body class="register-page">
+    <main class="container register-container">
+        <h1>新規登録</h1>
+        <!-- 新規ユーザー登録情報をサーバーへPOST送信します。 -->
+        <form th:action="@{/register}" method="post">
+            <!-- CSRF攻撃を防止するためのトークンを送信します。 -->
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <div class="form-group">
+                <label for="username">ユーザー名</label>
+                <input type="text" id="username" name="username" th:value="${username}" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input type="password" id="password" name="password" required autocomplete="new-password">
+            </div>
+            <button type="submit">登録</button>
+        </form>
+        <!-- ログイン画面へ戻るためのリンクです。 -->
+        <div class="form-footer">
+            <a th:href="@{/login}" class="link-secondary">ログイン画面へ戻る</a>
+        </div>
+    </main>
 
-<h1>新規登録</h1>
+    <!-- アプリ全体で共通利用する通知ポップアップです。 -->
+    <div id="notificationModal" class="notification-modal" role="dialog" aria-modal="true" aria-labelledby="notificationMessage" aria-hidden="true">
+        <div class="notification-modal-content">
+            <p id="notificationMessage"></p>
+            <button type="button" id="notificationOkButton" class="notification-ok-button">OK</button>
+        </div>
+    </div>
 
-<form action="/register" method="post">
+    <!-- サーバーから渡された登録成功メッセージをJavaScriptへ安全に渡します。 -->
+    <div th:if="${successMessage}" id="registerSuccessMessage" th:text="${successMessage}" hidden></div>
 
-    <input type="hidden"
-           th:name="${_csrf.parameterName}"
-           th:value="${_csrf.token}">
+    <!-- サーバーから渡された登録エラーメッセージをJavaScriptへ安全に渡します。 -->
+    <div th:if="${registerErrorMessage}" id="registerErrorMessage" th:text="${registerErrorMessage}" hidden></div>
 
-    <label>
-        ユーザー名：
-        <input type="text" name="username">
-    </label>
-
-    <br><br>
-
-    <label>
-        パスワード：
-        <input type="password" name="password">
-    </label>
-
-    <br><br>
-
-    <button type="submit">登録</button>
-
-</form>
-
+    <!-- 共通通知処理を読み込みます。 -->
+    <script th:src="@{/js/diary.js}"></script>
 </body>
 </html>
