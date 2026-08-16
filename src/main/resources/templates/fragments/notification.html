@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+    <!-- アプリ全体で共通利用する通知ポップアップです。 -->
+    <div th:fragment="notification"
+         id="notificationModal"
+         class="notification-modal"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="notificationMessage"
+         aria-hidden="true">
+
+        <div class="notification-modal-content">
+            <p id="notificationMessage"></p>
+
+            <button type="button"
+                    id="notificationOkButton"
+                    class="notification-ok-button">
+                OK
+            </button>
+        </div>
+
+    </div>
+
+</body>
+</html>

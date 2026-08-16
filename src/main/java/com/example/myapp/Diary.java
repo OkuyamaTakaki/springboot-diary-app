@@ -1,6 +1,7 @@
 package com.example.myapp;
 
 import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,8 +15,7 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 /**
- * 日記データを管理する永続化エンティティ。
- * データベースの「diaries」テーブルとマッピングされます。
+ * 日記データを管理するエンティティ。
  */
 @Entity
 @Table(name = "diaries")
@@ -37,29 +37,33 @@ public class Diary {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    // ★修正ポイント：FetchType.LAZY から、確実に対象ユーザーのデータを一気に読み込む「EAGER」に変更しました。
-    // これにより、画面（Thymeleaf）に日記一覧を渡す際のエラーが根本から消滅し、過去の日記が確実に表示されるようになります。
+    /**
+     * 日記の所有ユーザー。
+     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     /**
-     * JPA仕様に伴うデフォルトコンストラクタ。
+     * JPAが使用するデフォルトコンストラクタ。
      */
     protected Diary() {
     }
 
     /**
-     * 日記作成用のコンストラクタ。
+     * 日記作成用コンストラクタ。
+     *
+     * @param title 日記タイトル
+     * @param content 日記本文
      */
     public Diary(final String title, final String content) {
         this.title = title;
         this.content = content;
     }
 
-    /* ==========================================================================
-       JPA ライフサイクルコールバック（日付の自動設定・自動更新）
-       ========================================================================== */
+    /**
+     * 日記作成時に作成日時と更新日時を設定します。
+     */
     @PrePersist
     protected void onCreate() {
         final LocalDateTime now = LocalDateTime.now();
@@ -67,14 +71,14 @@ public class Diary {
         this.updatedAt = now;
     }
 
+    /**
+     * 日記更新時に更新日時を設定します。
+     */
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 
-    /* ==========================================================================
-       ゲッター / セッター
-       ========================================================================= */
     public Long getId() {
         return id;
     }

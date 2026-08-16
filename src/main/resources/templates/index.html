@@ -3,80 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- アプリ全体で使用する丸みのある日本語フォント -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
     <title>マイページ - 日記アプリ</title>
-    <!-- アプリ共通CSS -->
     <link rel="stylesheet" th:href="@{/css/diary.css}">
 </head>
 
 <body>
+
     <!-- ログイン中のユーザー名とログアウト操作を表示します。 -->
     <header class="site-header">
-        <h1 th:text="${username} + 'さんの ありがとう日記'">ユーザー名さんの日記</h1>
-        <!-- Spring SecurityのCSRF対策を行ったうえでログアウトをPOST送信します。 -->
+        <h1 th:text="${username} + 'さんの ありがとう日記'">
+            ユーザー名さんの日記
+        </h1>
+
+        <!-- Spring SecurityのCSRF対策を行ったうえでログアウトします。 -->
         <form th:action="@{/logout}" method="post" class="logout-form">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
             <button type="submit" class="btn-text">ログアウト</button>
         </form>
     </header>
 
     <main class="container">
+
         <!-- 日記の新規登録フォームです。 -->
         <section class="diary-write-section">
             <h2>日記を書く</h2>
-            <!-- 入力された日記をサーバーへPOST送信します。 -->
+
             <form th:action="@{/diary}" method="post">
-                <!-- Spring SecurityのCSRF対策用トークンです。 -->
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <!-- CSRF対策用トークンです。 -->
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
                 <div class="form-group">
                     <label for="title">タイトル</label>
-                    <input type="text" id="title" name="title" th:value="${title}" required>
+                    <input type="text"
+                           id="title"
+                           name="title"
+                           th:value="${title}"
+                           required>
                 </div>
+
                 <div class="form-group">
                     <label for="content">本文</label>
-                    <textarea id="content" name="content" rows="10" th:text="${content}" required></textarea>
+                    <textarea id="content"
+                              name="content"
+                              rows="10"
+                              th:text="${content}"
+                              required></textarea>
                 </div>
+
                 <div class="form-actions">
                     <button type="submit">登録</button>
                 </div>
             </form>
 
-            <!-- DiaryControllerから渡された日記登録エラーをJavaScriptへ渡します。 -->
-            <div th:if="${errorMessage}" id="diaryErrorMessage" th:text="${errorMessage}" hidden></div>
+            <!-- 日記登録時のバリデーションエラーをJavaScriptへ渡します。 -->
+            <div th:if="${errorMessage}"
+                 id="diaryErrorMessage"
+                 th:text="${errorMessage}"
+                 hidden>
+            </div>
         </section>
 
-        <!-- ログイン中のユーザーが登録した日記を一覧表示します。 -->
+        <!-- ログイン中のユーザーの日記一覧を表示します。 -->
         <section class="diary-list-section">
             <h2>日記一覧</h2>
+
             <div class="table-responsive">
                 <table class="diary-table">
                     <thead>
                         <tr>
                             <th>作成日</th>
                             <th>更新日</th>
+                            <th>更新時間</th>
                             <th>タイトル</th>
                             <th>本文</th>
                             <th>操作</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        <!-- Controllerから渡された日記を1件ずつ表示します。 -->
+                        <!-- Controllerから渡されたログインユーザーの日記を表示します。 -->
                         <tr th:each="diary : ${diaries}">
-                            <td data-label="作成日" th:text="${#temporals.format(diary.createdAt, 'yyyy年M月d日')}">2026年8月15日</td>
-                            <td data-label="更新日" th:text="${#temporals.format(diary.updatedAt, 'yyyy年M月d日')}">2026年8月15日</td>
-                            <td data-label="タイトル" class="cell-title" th:text="${diary.title}">タイトルのサンプル</td>
-                            <td data-label="本文" class="cell-content" th:text="${diary.content}">本文のサンプル</td>
+                            <td data-label="作成日"
+                                th:text="${#temporals.format(diary.createdAt, 'yyyy年M月d日')}">
+                                2026年8月16日
+                            </td>
+
+                            <td data-label="更新日"
+                                th:text="${#temporals.format(diary.updatedAt, 'yyyy年M月d日')}">
+                                2026年8月16日
+                            </td>
+
+                            <td data-label="更新時間"
+                                th:text="${#temporals.format(diary.updatedAt, 'HH:mm')}">
+                                20:57
+                            </td>
+
+                            <td data-label="タイトル"
+                                class="cell-title"
+                                th:text="${diary.title}">
+                                今日の日記
+                            </td>
+
+                            <td data-label="本文"
+                                class="cell-content"
+                                th:text="${diary.content}">
+                                今日も一日頑張りました。
+                            </td>
+
                             <td data-label="操作">
-                                <!-- 日記IDをJavaScriptへ渡し、編集対象を特定します。 -->
-                                <button type="button" class="btn-edit" th:attr="data-id=${diary.id}" onclick="openEditModal(this)">編集</button>
+                                <!-- data-idには編集対象の日記IDを保持します。 -->
+                                <button type="button"
+                                        class="btn-edit"
+                                        th:attr="data-id=${diary.id}"
+                                        onclick="openEditModal(this)">
+                                    編集
+                                </button>
                             </td>
                         </tr>
-                        <!-- 日記が1件も存在しない場合に表示します。 -->
+
+                        <!-- 日記が存在しない場合に表示します。 -->
                         <tr th:if="${#lists.isEmpty(diaries)}">
-                            <td colspan="5" class="empty-message">まだ日記が投稿されていません。</td>
+                            <td colspan="6" class="empty-message">
+                                まだ日記が投稿されていません。
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -85,43 +141,71 @@
     </main>
 
     <!-- 日記編集用モーダルです。 -->
-    <div id="editModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div id="editModal"
+         class="modal"
+         role="dialog"
+         aria-labelledby="modalTitle"
+         aria-hidden="true">
+
         <div class="modal-content">
             <h2 id="modalTitle">日記を編集</h2>
+
             <!-- 編集処理で発生したエラーを表示します。 -->
-            <p id="editErrorMessage" class="error-message" role="alert"></p>
-            <!-- JavaScriptから非同期で日記を更新します。 -->
+            <p id="editErrorMessage"
+               class="error-message"
+               role="alert">
+            </p>
+
             <form id="editForm">
-                <!-- 非同期更新時にSpring SecurityのCSRF検証へ使用します。 -->
-                <input type="hidden" id="csrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <!-- 非同期更新用のCSRFトークンです。 -->
+                <input type="hidden"
+                       id="csrfToken"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
                 <div class="form-group">
                     <label for="editTitle">タイトル</label>
-                    <input type="text" id="editTitle" name="title" required>
+                    <input type="text"
+                           id="editTitle"
+                           name="title"
+                           required>
                 </div>
+
                 <div class="form-group">
                     <label for="editContent">本文</label>
-                    <textarea id="editContent" name="content" rows="10" required></textarea>
+                    <textarea id="editContent"
+                              name="content"
+                              rows="10"
+                              required></textarea>
                 </div>
+
                 <div class="modal-actions">
-                    <button type="submit" class="btn-primary">更新</button>
-                    <button type="button" class="btn-secondary" onclick="closeEditModal()">キャンセル</button>
+                    <button type="submit" class="btn-primary">
+                        更新
+                    </button>
+
+                    <button type="button"
+                            class="btn-secondary"
+                            onclick="closeEditModal()">
+                        キャンセル
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- 日記登録・更新などの処理結果を共通表示する通知モーダルです。 -->
-    <div id="notificationModal" class="notification-modal" role="dialog" aria-modal="true" aria-labelledby="notificationMessage" aria-hidden="true">
-        <div class="notification-modal-content">
-            <p id="notificationMessage">処理が完了しました。</p>
-            <button type="button" id="notificationOkButton" class="notification-ok-button">OK</button>
-        </div>
+    <!-- アプリ全体で共通利用する通知モーダルを読み込みます。 -->
+    <div th:replace="~{fragments/notification :: notification}"></div>
+
+    <!-- 日記登録成功時のメッセージをJavaScriptへ渡します。 -->
+    <div th:if="${successMessage}"
+         id="diarySuccessMessage"
+         th:text="${successMessage}"
+         hidden>
     </div>
 
-    <!-- Controllerから渡された日記登録成功メッセージをJavaScriptへ渡します。 -->
-    <div th:if="${successMessage}" id="diarySuccessMessage" th:text="${successMessage}" hidden></div>
-
-    <!-- 日記の編集処理と共通通知を制御します。 -->
+    <!-- 日記編集と共通通知を管理するJavaScriptです。 -->
     <script th:src="@{/js/diary.js}"></script>
+
 </body>
 </html>

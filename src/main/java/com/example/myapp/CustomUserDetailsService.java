@@ -8,53 +8,52 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- * 一般ユーザー用の認証処理を行うセキュリティサービス。
- * Spring Securityから呼び出され、データベースのユーザー情報と照合します。
+ * 一般ユーザーの認証処理を担当するサービス。
+ * Spring Securityから呼び出され、データベースに登録されたユーザー情報を取得して認証用UserDetailsへ変換します。
  */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    // 実務必須：System.out.printlnを廃止し、本番環境のログ管理システムに連動するSLF4Jロガーを使用
     private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
     private final UserService userService;
 
     /**
-     * コンストラクタ注入（推奨される依存性注入の形）。
-     * @param userService ユーザーデータを操作するビジネスロジック
+     * コンストラクタによる依存性注入。
+     *
+     * @param userService ユーザー情報を取得するサービス
      */
-    public CustomUserDetailsService(UserService userService) {
+    public CustomUserDetailsService(final UserService userService) {
         this.userService = userService;
     }
 
     /**
-     * ログインフォームから入力されたユーザー名をもとに、認証用ユーザー情報を取得します。
-     * 
-     * @param username ログイン試行されたユーザー名
-     * @return Spring Securityが解釈できるUserDetailsオブジェクト
-     * @throws UsernameNotFoundException ユーザー名が存在しない場合にスローされる例外
+     * ログイン時に入力されたユーザー名から認証対象ユーザーを取得します。
+     *
+     * @param username ログイン時に入力されたユーザー名
+     * @return Spring Securityが認証に使用するUserDetails
+     * @throws UsernameNotFoundException ユーザーが存在しない場合
      */
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        // デバッグログ：本番環境では不要な出力レベルを制御できるようdebugまたはinfoで管理
-        log.info("ログイン認証を開始しました。検索対象ユーザー名: {}", username);
+        log.debug("一般ユーザーの認証処理を開始します。ユーザー名: {}", username);
 
-        // データベースからユーザーエンティティを取得
         final User user = userService.findByUsername(username);
 
-        // ユーザーが存在しない場合は、即座に例外をスロー（ガード節によるネストの浅い綺麗な設計）
+        // ユーザーが存在しない場合は認証失敗として例外を送出します。
         if (user == null) {
-            log.warn("ログイン認証に失敗しました。ユーザー名が存在しません: {}", username);
+            log.warn("認証に失敗しました。ユーザーが存在しません。ユーザー名: {}", username);
             throw new UsernameNotFoundException("ユーザー名またはパスワードが正しくありません。");
         }
 
-        log.info("ユーザーの取得に成功しました。内部ユーザー情報: {}", user);
+        log.debug("認証対象ユーザーを取得しました。ユーザー名: {}", username);
 
-        // 同名クラス（com.example.myapp.User）との衝突を防ぐため、Spring SecurityのUserを型指定付きでビルダー生成
+        // DBに保存されたBCryptハッシュ化パスワードをSpring Securityへ渡し、認証処理を委譲します。
+        // 一般ユーザーにはUSERロールを付与します。
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
-                .roles("USER") // 認可情報（Role）を一律で一般ユーザー権限に設定
+                .roles("USER")
                 .build();
     }
 }

@@ -39,7 +39,7 @@ body {
   line-height: 1.8;
 }
 
-/* ログイン・新規登録画面ではbody自体をカード化せず、背景だけを設定します。 */
+/* ログイン・新規登録画面ではbodyをカード化せず、背景のみを設定します。 */
 body.login-page,
 body.register-page {
   max-width: none !important;
@@ -75,7 +75,7 @@ body.register-page .register-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto 25px;
   padding: 30px;
   background-color: var(--color-white);
@@ -97,7 +97,7 @@ body.register-page .register-container {
   background: none !important;
 }
 
-/* ログアウトボタンをヘッダー内に収まるコンパクトなボタンにします。 */
+/* ログアウトボタンをヘッダー内に収まるコンパクトなサイズにします。 */
 .site-header .logout-form button {
   display: inline-block !important;
   width: auto !important;
@@ -119,9 +119,10 @@ body.register-page .register-container {
   box-shadow: 0 1px 0 #3f9142 !important;
 }
 
-/* 日記画面のメインコンテンツを中央カードとして表示します。 */
+/* 日記画面のメインコンテンツを広めの中央カードとして表示します。 */
 body:has(table) .container {
-  max-width: 1000px !important;
+  width: 100%;
+  max-width: 1200px !important;
   margin: 0 auto 40px !important;
   padding: 30px;
   background-color: var(--color-white) !important;
@@ -314,14 +315,14 @@ body.register-page a:hover {
   color: #358438 !important;
 }
 
-/* 日記一覧を狭い画面でも確認できるよう横スクロールを許可します。 */
+/* 日記一覧の横幅を確保し、必要な場合だけ横スクロールを許可します。 */
 .table-responsive,
 .table-wrapper {
   width: 100% !important;
   overflow-x: auto !important;
 }
 
-/* 日記一覧テーブルの幅と列幅を安定させます。 */
+/* 日記一覧テーブルをPC画面で広く使えるように設定します。 */
 table {
   width: 100% !important;
   margin-top: 15px !important;
@@ -333,30 +334,35 @@ table {
   border-collapse: collapse !important;
 }
 
-/* 日記一覧の各列幅を設定します。 */
+/* 6列構成の日記一覧で各項目の表示幅を調整します。 */
 th:nth-child(1),
 td:nth-child(1) {
-  width: 15%;
+  width: 13%;
 }
 
 th:nth-child(2),
 td:nth-child(2) {
-  width: 15%;
+  width: 13%;
 }
 
 th:nth-child(3),
 td:nth-child(3) {
-  width: 25%;
+  width: 10%;
 }
 
 th:nth-child(4),
 td:nth-child(4) {
-  width: 33%;
+  width: 20%;
 }
 
 th:nth-child(5),
 td:nth-child(5) {
-  width: 12%;
+  width: 34%;
+}
+
+th:nth-child(6),
+td:nth-child(6) {
+  width: 10%;
 }
 
 /* テーブルセルの左右余白と縦方向の位置を統一します。 */
@@ -381,8 +387,8 @@ th {
 }
 
 /* 操作列を中央揃えにします。 */
-th:nth-child(5),
-td:nth-child(5) {
+th:last-child,
+td:last-child {
   text-align: center !important;
 }
 
@@ -397,7 +403,7 @@ th:last-child {
 
 /* 日記データセルを白背景と下線で表示します。 */
 td {
-  height: 50px !important;
+  min-height: 50px;
   padding-top: 14px !important;
   padding-bottom: 14px !important;
   color: var(--color-text) !important;
@@ -405,13 +411,19 @@ td {
   background-color: var(--color-white) !important;
   border: none !important;
   border-bottom: 1px solid var(--color-border) !important;
-  word-wrap: break-word !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
 }
 
 /* 日記タイトルを本文より強調します。 */
-td:nth-child(3) {
+td:nth-child(4) {
   color: var(--color-primary-dark);
   font-weight: bold;
+}
+
+/* 本文が長い場合でもテーブルからはみ出さないようにします。 */
+td:nth-child(5) {
+  overflow-wrap: anywhere !important;
 }
 
 /* マウスオーバーした日記行を強調します。 */
@@ -512,7 +524,7 @@ td button:hover {
   justify-content: center;
 }
 
-/* aria-hidden=falseの通知ポップアップだけ表示します。 */
+/* aria-hidden=falseの通知ポップアップだけを表示します。 */
 .notification-modal[aria-hidden="false"] {
   display: flex;
 }
@@ -595,7 +607,7 @@ td button:hover {
   display: none !important;
 }
 
-/* タブレットではページ全体の余白と文字サイズを調整します。 */
+/* タブレットでは余白と日記一覧の文字サイズを調整します。 */
 @media (max-width: 768px) {
   body {
     padding: 20px;
@@ -604,10 +616,28 @@ td button:hover {
   html {
     font-size: 15px;
   }
+
+  .site-header {
+    padding: 24px;
+  }
+
+  body:has(table) .container {
+    padding: 24px;
+  }
+
+  table {
+    font-size: 0.9rem !important;
+  }
+
+  th,
+  td {
+    padding-right: 8px !important;
+    padding-left: 8px !important;
+  }
 }
 
-/* スマートフォンではカードとポップアップの余白を調整します。 */
-@media (max-width: 480px) {
+/* スマートフォンではヘッダーを縦配置に変更します。 */
+@media (max-width: 600px) {
   body {
     padding: 12px;
   }
@@ -628,8 +658,144 @@ td button:hover {
   }
 
   .site-header {
-    padding: 24px 20px;
+    display: block;
+    padding: 20px;
     border-left-width: 6px;
+  }
+
+  .site-header h1 {
+    margin-bottom: 15px;
+    font-size: 1.35rem;
+  }
+
+  .site-header .logout-form {
+    width: 100% !important;
+  }
+
+  .site-header .logout-form button {
+    width: 100% !important;
+    margin-top: 0 !important;
+  }
+
+  body:has(table) .container {
+    padding: 20px;
+    border-left-width: 6px;
+  }
+
+  .diary-write-section form {
+    padding: 18px !important;
+  }
+
+  /* スマートフォンでは横長テーブルを廃止し、1件ごとのカードに変更します。 */
+  .table-responsive,
+  .table-wrapper {
+    overflow: visible !important;
+  }
+
+  table {
+    display: block !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    background: transparent !important;
+  }
+
+  thead {
+    display: none !important;
+  }
+
+  tbody {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  tbody tr {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 16px !important;
+    padding: 14px !important;
+    background-color: var(--color-white) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 12px rgba(44, 74, 62, 0.06) !important;
+  }
+
+  tbody tr:hover td {
+    background-color: transparent !important;
+  }
+
+  tbody td {
+    display: grid !important;
+    grid-template-columns: 90px minmax(0, 1fr) !important;
+    width: 100% !important;
+    min-height: auto !important;
+    padding: 8px 0 !important;
+    color: var(--color-text) !important;
+    text-align: left !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #e5ebe3 !important;
+  }
+
+  /* HTMLのdata-labelを利用して、スマホでも各項目名を表示します。 */
+  tbody td::before {
+    content: attr(data-label);
+    padding-right: 10px;
+    color: var(--color-primary-dark);
+    font-weight: bold;
+  }
+
+  /* 最後の操作欄だけ下線をなくしてカード内をすっきりさせます。 */
+  tbody td:last-child {
+    border-bottom: none !important;
+    text-align: left !important;
+  }
+
+  /* 本文は長文でもカードの横幅からはみ出さないようにします。 */
+  tbody td:nth-child(5) {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
+  /* タイトルをスマートフォンでも強調します。 */
+  tbody td:nth-child(4) {
+    color: var(--color-primary-dark) !important;
+    font-weight: bold !important;
+  }
+
+  /* 編集ボタンはスマートフォンでは押しやすい幅にします。 */
+  tbody td:last-child button {
+    width: 100% !important;
+    max-width: 120px !important;
+    margin: 0 !important;
+  }
+
+  /* 日記が存在しない場合はカード形式を解除して中央表示します。 */
+  tbody tr:has(.empty-message) {
+    padding: 20px !important;
+    text-align: center !important;
+  }
+
+  tbody tr:has(.empty-message) td {
+    display: block !important;
+    border: none !important;
+  }
+
+  tbody tr:has(.empty-message) td::before {
+    display: none !important;
+  }
+
+  .modal-content {
+    width: calc(100% - 24px) !important;
+    margin: 30px auto !important;
+    padding: 24px 20px !important;
+    border-left-width: 6px !important;
+  }
+
+  .modal-content form button {
+    width: calc(50% - 6px) !important;
+    margin-right: 8px !important;
   }
 
   .notification-modal {
@@ -644,5 +810,35 @@ td button:hover {
 
   #notificationMessage {
     font-size: 1rem;
+  }
+}
+
+/* 非常に狭いスマートフォンでは編集ボタンを縦幅も含めて押しやすくします。 */
+@media (max-width: 380px) {
+  body {
+    padding: 8px;
+  }
+
+  body:has(table) .container {
+    padding: 16px;
+  }
+
+  .site-header {
+    padding: 18px;
+  }
+
+  tbody tr {
+    padding: 12px !important;
+  }
+
+  tbody td {
+    grid-template-columns: 78px minmax(0, 1fr) !important;
+    font-size: 0.9rem !important;
+  }
+
+  .modal-content form button {
+    display: block !important;
+    width: 100% !important;
+    margin: 12px 0 0 !important;
   }
 }

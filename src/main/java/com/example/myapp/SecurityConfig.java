@@ -1,37 +1,41 @@
 package com.example.myapp;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * アプリケーションの認証・認可およびセキュリティ設定を管理します。
+ */
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
-
+    /**
+     * パスワードをBCryptでハッシュ化します。
+     *
+     * @return パスワードエンコーダー
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ==========================================================================
-    // 1. H2 Console 専用セキュリティチェーン
-    // ==========================================================================
+    /**
+     * H2 Console専用のセキュリティ設定です。
+     *
+     * @param http HTTPセキュリティ設定
+     * @param h2UserDetailsService H2 Console用認証サービス
+     * @return H2 Console用セキュリティフィルターチェーン
+     */
     @Bean
     @Order(1)
     public SecurityFilterChain h2SecurityFilterChain(
             final HttpSecurity http,
             final H2UserDetailsService h2UserDetailsService) throws Exception {
-
-        log.info("H2 Console専用のセキュリティチェーン(Order 1)を構築します。");
 
         http
             .securityMatcher("/h2-console/**")
@@ -50,16 +54,18 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ==========================================================================
-    // 2. 一般ユーザー・メインアプリ専用セキュリティチェーン
-    // ==========================================================================
+    /**
+     * 一般ユーザー向けのメインアプリケーションのセキュリティ設定です。
+     *
+     * @param http HTTPセキュリティ設定
+     * @param customUserDetailsService 一般ユーザー用認証サービス
+     * @return メインアプリケーション用セキュリティフィルターチェーン
+     */
     @Bean
     @Order(2)
     public SecurityFilterChain securityFilterChain(
             final HttpSecurity http,
             final CustomUserDetailsService customUserDetailsService) throws Exception {
-
-        log.info("一般ユーザー専用のメインセキュリティチェーン(Order 2)を構築します。");
 
         http
             .authorizeHttpRequests(auth -> auth

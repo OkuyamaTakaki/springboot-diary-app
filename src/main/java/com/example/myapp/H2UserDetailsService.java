@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * 開発環境のH2 Console専用の認証サービス。
+ * H2 Console専用の管理者認証を担当するサービス。
  */
 @Service
 public class H2UserDetailsService implements UserDetailsService {
@@ -21,29 +21,36 @@ public class H2UserDetailsService implements UserDetailsService {
 
     /**
      * H2 Console管理者パスワード。
-     * 環境変数 H2_ADMIN_PASSWORD から取得する。
+     * application.propertiesを通じて環境変数から取得します。
      */
     @Value("${h2.admin.password}")
     private String h2AdminPassword;
 
     /**
-     * コンストラクタ注入。
+     * コンストラクタによる依存性注入。
+     *
+     * @param passwordEncoder パスワードエンコーダー
      */
     public H2UserDetailsService(final PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * H2 Consoleの管理者認証情報を取得します。
+     *
+     * @param username ログイン時に入力されたユーザー名
+     * @return Spring Securityが認証に使用するUserDetails
+     * @throws UsernameNotFoundException 管理者ユーザー以外が指定された場合
+     */
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        log.info("H2 Console への接続試行を検知しました。ユーザー名: {}", username);
+        log.debug("H2 Consoleの認証処理を開始します。ユーザー名: {}", username);
 
-        // 管理者名が「admin」でなければアクセスを拒否
+        // H2 Consoleへのログインはadminユーザーに限定します。
         if (!"admin".equals(username)) {
-            log.warn("H2 Console へのアクセスが拒否されました。無効なユーザー名です: {}", username);
+            log.warn("H2 Consoleの認証に失敗しました。無効なユーザー名です。");
             throw new UsernameNotFoundException("ユーザー名またはパスワードが正しくありません。");
         }
-
-        log.info("H2 Console の管理者認証を処理します。");
 
         return org.springframework.security.core.userdetails.User
                 .withUsername("admin")

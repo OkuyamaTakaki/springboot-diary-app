@@ -4,62 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ログイン - 日記アプリ</title>
-    <!-- アプリ全体で使用するフォントを読み込みます。 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- アプリ共通CSSを読み込みます。 -->
     <link rel="stylesheet" th:href="@{/css/diary.css}">
 </head>
+
 <body class="login-page">
+
     <main class="container">
         <h1>ログイン</h1>
+
         <!-- Spring Securityへログイン情報をPOST送信します。 -->
         <form th:action="@{/login}" method="post">
-            <!-- CSRF攻撃を防止するためのトークンを送信します。 -->
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+            <!-- CSRF対策用トークン -->
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
             <div class="form-group">
                 <label for="username">ユーザー名</label>
-                <input type="text" id="username" name="username" required autocomplete="username">
+                <input type="text"
+                       id="username"
+                       name="username"
+                       required
+                       autocomplete="username">
             </div>
+
             <div class="form-group">
                 <label for="password">パスワード</label>
-                <input type="password" id="password" name="password" required autocomplete="current-password">
+                <input type="password"
+                       id="password"
+                       name="password"
+                       required
+                       autocomplete="current-password">
             </div>
-            <!-- 認証失敗時のメッセージをJavaScriptへ渡します。 -->
-            <div id="loginErrorMessage" th:if="${param.error != null}" hidden>
+
+            <!-- Spring Securityの認証失敗メッセージをJavaScriptへ渡します。 -->
+            <div id="loginErrorMessage"
+                 th:if="${param.error != null}"
+                 hidden>
                 ユーザー名またはパスワードが正しくありません。
             </div>
+
             <button type="submit">ログイン</button>
         </form>
-        <!-- 新規ユーザー登録画面へのリンクです。 -->
+
+        <!-- 新規ユーザー登録画面へのリンク -->
         <div class="form-footer">
-            <a th:href="@{/register}" class="link-secondary">新規登録はこちら</a>
+            <a th:href="@{/register}" class="link-secondary">
+                新規登録はこちら
+            </a>
         </div>
     </main>
 
-    <!-- アプリ全体で共通利用する通知ポップアップです。 -->
-    <div id="notificationModal" class="notification-modal" role="dialog" aria-modal="true" aria-labelledby="notificationMessage" aria-hidden="true">
-        <div class="notification-modal-content">
-            <p id="notificationMessage"></p>
-            <button type="button" id="notificationOkButton" class="notification-ok-button">OK</button>
-        </div>
-    </div>
+    <!-- 共通通知モーダルを読み込みます。 -->
+    <div th:replace="~{fragments/notification :: notification}"></div>
 
     <!-- 新規登録成功時のFlash AttributeをJavaScriptへ渡します。 -->
-    <div id="registerSuccessMessage" th:if="${successMessage}" th:text="${successMessage}" hidden></div>
+    <div id="registerSuccessMessage"
+         th:if="${successMessage}"
+         th:text="${successMessage}"
+         hidden>
+    </div>
 
-    <!-- 共通通知処理を読み込みます。 -->
+    <!-- 共通JavaScript -->
     <script th:src="@{/js/diary.js}"></script>
 
-    <!-- ログインエラーを共通通知ポップアップで表示します。 -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const loginErrorMessage = document.getElementById("loginErrorMessage");
-            if (loginErrorMessage) {
-                showNotification(loginErrorMessage.textContent.trim(), "login");
-            }
-        });
-    </script>
 </body>
 </html>
