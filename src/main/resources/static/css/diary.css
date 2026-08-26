@@ -38,7 +38,7 @@ html {
 /* 全ページ共通の背景、文字色、フォント、行間を設定します。 */
 body {
   min-height: 100vh;
-  padding: 40px 20px;
+  padding: 24px 16px;
   background:
     linear-gradient(
       rgba(255, 255, 255, 0.2),
@@ -108,8 +108,8 @@ body.register-page .app-brand {
   align-items: center;
   justify-content: space-between;
   max-width: 1200px;
-  margin: 0 auto 25px;
-  padding: 28px 30px;
+  margin: 0 auto 18px;
+  padding: 20px 22px;
   background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,241,229,0.96));
   border: 1px solid rgba(146, 123, 92, 0.22);
   border-left: 10px solid var(--color-primary);
@@ -156,8 +156,8 @@ body.register-page .app-brand {
 body:has(table) .container {
   width: 100%;
   max-width: 1200px !important;
-  margin: 0 auto 40px !important;
-  padding: 30px;
+  margin: 0 auto 24px !important;
+  padding: 22px 20px;
   background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(248,241,229,0.96));
   border: 1px solid rgba(146, 123, 92, 0.22);
   border-left: 10px solid var(--color-primary) !important;
@@ -189,8 +189,8 @@ body:has(table) .container {
 
 /* メイン見出しのサイズ、色、下線、余白を設定します。 */
 h1 {
-  margin-bottom: 25px;
-  padding-bottom: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
   color: var(--color-primary-dark) !important;
   font-size: 1.6rem;
   border-bottom: 2px dashed var(--color-muted) !important;
@@ -199,8 +199,8 @@ h1 {
 /* セクション見出しの基本スタイルを設定します。 */
 h2,
 h3 {
-  margin-top: 30px;
-  margin-bottom: 20px;
+  margin-top: 18px;
+  margin-bottom: 12px;
   color: var(--color-primary-dark) !important;
   font-size: 1.3rem;
 }
@@ -208,7 +208,7 @@ h3 {
 /* 日記入力・一覧セクションの見出し上余白を調整します。 */
 .diary-write-section > h2,
 .diary-list-section > h2 {
-  margin-top: 12px;
+  margin-top: 0;
 }
 
 /* 編集モーダルの見出しはカード上端から余計な余白を作りません。 */
@@ -441,8 +441,8 @@ body.register-page a:hover {
   color: #358438 !important;
 }
 .diary-search-bar {
-  margin: 20px 0 24px;
-  padding: 16px 18px;
+  margin: 12px 0 16px;
+  padding: 12px 14px;
   background: rgba(255, 255, 255, 0.64);
   border: 1px solid rgba(146, 123, 92, 0.18);
   border-radius: 16px;
@@ -453,7 +453,7 @@ body.register-page a:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
   margin: 0 !important;
   padding: 0 !important;
@@ -522,9 +522,9 @@ body.register-page a:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  margin-top: 30px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-top: 10px;
+  margin-bottom: 12px;
 }
 
 /* 見出しの既定余白を解除し、並べ替え欄との位置を揃えます。 */
@@ -580,8 +580,8 @@ body.register-page a:hover {
 /* 日記一覧テーブルをPC画面で広く使えるように設定します。 */
 table {
   width: 100% !important;
-  margin-top: 15px !important;
-  margin-bottom: 30px !important;
+  margin-top: 8px !important;
+  margin-bottom: 20px !important;
   table-layout: fixed !important;
   font-size: 0.95rem !important;
   background-color: var(--color-white) !important;
