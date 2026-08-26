@@ -1,5 +1,8 @@
 package com.example.myapp;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,12 +15,32 @@ import org.springframework.stereotype.Repository;
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
     /**
-     * 指定したユーザーの日記をページングして取得します。
-     * ページ番号や1ページあたりの件数はPageableで指定します。
+     * 指定したユーザーの日記をページングして取得する。
      *
-     * @param user 日記の所有者
-     * @param pageable ページ番号・表示件数などのページング条件
-     * @return 指定ユーザーの日記をページングした結果
+     * @param user ユーザー
+     * @param pageable ページングおよびソート条件
+     * @return 指定したユーザーの日記
      */
-    Page<Diary> findByUser(final User user, final Pageable pageable);
+    Page<Diary> findByUser(User user, Pageable pageable);
+
+    /**
+     * 指定した日付の範囲に含まれる日記を取得する。
+     *
+     * @param user 検索対象ユーザー
+     * @param start 開始日時
+     * @param end 終了日時
+     * @return 対象の日記一覧
+     */
+    List<Diary> findByUserAndUpdatedAtBetween(User user, LocalDateTime start, LocalDateTime end);
+
+    /**
+     * 指定した日付の範囲に含まれる日記をページングして取得する。
+     *
+     * @param user 検索対象ユーザー
+     * @param start 開始日時
+     * @param end 終了日時
+     * @param pageable ページングおよびソート条件
+     * @return 対象の日記一覧
+     */
+    Page<Diary> findByUserAndUpdatedAtBetween(User user, LocalDateTime start, LocalDateTime end, Pageable pageable);
 }

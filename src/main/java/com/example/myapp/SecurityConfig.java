@@ -1,5 +1,6 @@
 package com.example.myapp;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -33,6 +34,7 @@ public class SecurityConfig {
      */
     @Bean
     @Order(1)
+    @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
     public SecurityFilterChain h2SecurityFilterChain(
             final HttpSecurity http,
             final H2UserDetailsService h2UserDetailsService) throws Exception {

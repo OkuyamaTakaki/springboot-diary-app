@@ -2,19 +2,25 @@
 
 /* アプリ全体で使用する色をCSS変数として定義します。 */
 :root {
-  --color-background: #f9f8f3;
-  --color-text: #2c4a3e;
-  --color-primary: #4a7c59;
-  --color-primary-dark: #386641;
-  --color-primary-light: #6a994e;
-  --color-button-light: #a7c957;
-  --color-button-hover: #b7dc67;
-  --color-muted: #a3b19b;
-  --color-border: #b5c4b1;
-  --color-error: #bc4749;
-  --color-error-background: #fdf0f0;
-  --color-form-background: #f2f7f2;
-  --color-white: #ffffff;
+  --color-paper: #f7f1e4;
+  --color-paper-deep: #efe4cf;
+  --color-ink: #2f3c2d;
+  --color-ink-soft: #59675c;
+  --color-primary: #5d7d5a;
+  --color-primary-dark: #405b43;
+  --color-primary-light: #7fa36e;
+  --color-accent: #d8b46a;
+  --color-accent-soft: #f0dfba;
+  --color-button-light: #d7c39e;
+  --color-button-hover: #e8d4a5;
+  --color-muted: #9ca794;
+  --color-border: #d2c4a6;
+  --color-error: #b94843;
+  --color-error-background: #fbe9e2;
+  --color-form-background: #fbf7f1;
+  --color-white: #fffdf9;
+  --shadow-soft: 0 10px 24px rgba(89, 79, 62, 0.08);
+  --shadow-card: 0 16px 32px rgba(80, 68, 53, 0.1);
 }
 
 /* 全要素のサイズ計算と標準余白を統一します。 */
@@ -33,8 +39,19 @@ html {
 body {
   min-height: 100vh;
   padding: 40px 20px;
-  background-color: var(--color-background);
-  color: var(--color-text);
+  background:
+    linear-gradient(
+      rgba(255, 255, 255, 0.2),
+      rgba(255, 255, 255, 0.2)
+    ),
+    repeating-linear-gradient(
+      0deg,
+      #f4efe5 0,
+      #f4efe5 1px,
+      #f8f3eb 1px,
+      #f8f3eb 8px
+    );
+  color: var(--color-ink);
   font-family: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
   line-height: 1.8;
 }
@@ -92,11 +109,12 @@ body.register-page .app-brand {
   justify-content: space-between;
   max-width: 1200px;
   margin: 0 auto 25px;
-  padding: 30px;
-  background-color: var(--color-white);
-  border-left: 8px solid var(--color-primary);
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(44, 74, 62, 0.06);
+  padding: 28px 30px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,241,229,0.96));
+  border: 1px solid rgba(146, 123, 92, 0.22);
+  border-left: 10px solid var(--color-primary);
+  border-radius: 22px;
+  box-shadow: var(--shadow-soft);
 }
 
 /* ヘッダー見出しの標準余白を解除してログアウトボタンと位置を揃えます。 */
@@ -140,10 +158,11 @@ body:has(table) .container {
   max-width: 1200px !important;
   margin: 0 auto 40px !important;
   padding: 30px;
-  background-color: var(--color-white) !important;
-  border-left: 8px solid var(--color-primary) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 8px 24px rgba(44, 74, 62, 0.06);
+  background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(248,241,229,0.96));
+  border: 1px solid rgba(146, 123, 92, 0.22);
+  border-left: 10px solid var(--color-primary) !important;
+  border-radius: 24px !important;
+  box-shadow: var(--shadow-card);
 }
 
 /* ログイン・新規登録画面のアプリ名を表示します。 */
@@ -421,7 +440,136 @@ body.register-page a {
 body.register-page a:hover {
   color: #358438 !important;
 }
+.diary-search-bar {
+  margin: 20px 0 24px;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid rgba(146, 123, 92, 0.18);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(96, 83, 63, 0.05);
+}
 
+.search-form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.search-label {
+  margin: 0 !important;
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.search-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.search-input {
+  width: min(250px, 100%) !important;
+  min-width: 150px;
+  padding: 10px 12px !important;
+  background: var(--color-white) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 1px 2px rgba(89, 79, 62, 0.04);
+}
+
+.btn-search,
+.btn-reset {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: auto !important;
+  min-width: 90px;
+  margin: 0 !important;
+  padding: 10px 16px !important;
+  color: var(--color-ink) !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  background: linear-gradient(180deg, var(--color-button-light), var(--color-button-hover)) !important;
+  border: 1px solid rgba(117, 100, 76, 0.28) !important;
+  border-radius: 999px !important;
+  box-shadow: 0 4px 0 rgba(111, 97, 72, 0.2) !important;
+  text-decoration: none !important;
+}
+
+.btn-reset {
+  min-width: auto;
+  background: linear-gradient(180deg, #efe8df, #e6dcc7) !important;
+}
+
+.btn-search:hover,
+.btn-reset:hover {
+  transform: translateY(1px) !important;
+  box-shadow: 0 2px 0 rgba(111, 97, 72, 0.18) !important;
+}
+
+/* 日記一覧の見出しと並べ替え欄を横並びに配置します。 */
+.diary-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+/* 見出しの既定余白を解除し、並べ替え欄との位置を揃えます。 */
+.diary-list-header h2 {
+  margin: 0;
+}
+
+/* 並べ替えフォームを通常の入力フォームから独立させます。 */
+.sort-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: auto;
+  margin: 0;
+  padding: 0 !important;
+  background: none !important;
+  border-radius: 0 !important;
+}
+
+/* 並べ替えラベルを選択欄と横並びにします。 */
+.sort-label {
+  margin: 0 !important;
+  white-space: nowrap;
+}
+
+/* 新しい順・古い順を選択するプルダウンです。 */
+.sort-select {
+  min-width: 140px;
+  padding: 9px 38px 9px 14px;
+  color: var(--color-primary-dark);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: bold;
+  background-color: var(--color-form-background);
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* キーボード操作時にも選択位置を判別できるようにします。 */
+.sort-select:focus {
+  border-color: var(--color-primary-light);
+  box-shadow: 0 0 0 3px rgba(106, 153, 78, 0.18);
+}
 /* 日記一覧の横幅を確保し、必要な場合だけ横スクロールを許可します。 */
 .table-responsive,
 .table-wrapper {
@@ -761,11 +909,39 @@ td button:hover {
   }
 
   .site-header {
-    padding: 24px;
+    display: block;
+    padding: 24px 20px;
+  }
+
+  .site-header h1 {
+    margin-bottom: 12px;
   }
 
   body:has(table) .container {
     padding: 24px;
+  }
+
+  .search-form,
+  .diary-list-header {
+    display: block;
+  }
+
+  .search-label,
+  .sort-label {
+    display: block;
+    margin-bottom: 8px !important;
+  }
+
+  .search-controls,
+  .sort-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .search-input {
+    width: 100% !important;
+    min-width: 0;
   }
 
   table {
