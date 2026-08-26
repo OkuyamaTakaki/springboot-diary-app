@@ -549,13 +549,15 @@ body.register-page a:hover {
   display: inline-flex !important;
   align-items: center;
   height: 42px;
-  line-height: 1.2 !important;
+  line-height: 42px !important;
+  vertical-align: middle;
   margin: 0 !important;
   white-space: nowrap;
 }
 
 /* 新しい順・古い順を選択するプルダウンです。 */
 .sort-select {
+  display: block;
   height: 42px;
   min-width: 140px;
   padding: 0 38px 0 14px;
@@ -936,6 +938,7 @@ td button:hover {
   .sort-label {
     display: block;
     height: auto;
+    line-height: 1.2 !important;
     margin-bottom: 8px !important;
   }
 
