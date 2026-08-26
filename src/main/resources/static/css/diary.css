@@ -508,7 +508,6 @@ body.register-page a:hover {
 
 .btn-reset {
   min-width: auto;
-  background: linear-gradient(180deg, #efe8df, #e6dcc7) !important;
 }
 
 .btn-search:hover,
@@ -538,6 +537,7 @@ body.register-page a:hover {
   align-items: center;
   gap: 10px;
   width: auto;
+  min-height: 42px;
   margin: 0;
   padding: 0 !important;
   background: none !important;
@@ -546,6 +546,9 @@ body.register-page a:hover {
 
 /* 並べ替えラベルを選択欄と横並びにします。 */
 .sort-label {
+  display: inline-flex !important;
+  align-items: center;
+  line-height: 1.2 !important;
   margin: 0 !important;
   white-space: nowrap;
 }
@@ -558,6 +561,7 @@ body.register-page a:hover {
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: bold;
+  line-height: 1.2;
   background-color: var(--color-form-background);
   border: 2px solid var(--color-border);
   border-radius: 10px;
@@ -1008,6 +1012,53 @@ td button:hover {
 
   .diary-form-toggle {
     padding: 14px 16px !important;
+  }
+
+  /* 検索と並べ替えをスマートフォンの幅に合わせて配置します。 */
+  .diary-list-header {
+    margin-top: 4px;
+    margin-bottom: 10px;
+  }
+
+  .sort-form {
+    width: 100%;
+    min-height: 40px;
+    gap: 8px;
+  }
+
+  .sort-form .sort-select {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+  }
+
+  .diary-search-bar {
+    margin: 10px 0 14px;
+    padding: 10px;
+  }
+
+  .search-form {
+    width: 100%;
+  }
+
+  .search-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .search-input {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  .btn-search,
+  .btn-reset {
+    min-width: 0;
+    width: 100% !important;
+    padding-right: 12px !important;
+    padding-left: 12px !important;
   }
 
   .diary-write-section form {
