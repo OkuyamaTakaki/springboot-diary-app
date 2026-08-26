@@ -106,6 +106,12 @@
 
         <!-- 選択した並び順をGETリクエストでControllerへ送信します。 -->
         <form th:action="@{/}" method="get" class="sort-form">
+          <input
+            type="hidden"
+            name="searchDate"
+            th:value="${searchDate}"
+          >
+
           <label for="sort" class="sort-label">並べ替え</label>
 
           <select
