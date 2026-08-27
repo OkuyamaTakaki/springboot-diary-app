@@ -46,7 +46,9 @@ RenderのDockerビルドでも同じテストを必ず実行します。GitHub�
 
 本番では次の値をRenderの秘密環境変数へ設定します。実値やパスワードはソースへ保存しません。
 
-- `DATABASE_URL`: NeonのJava用JDBC接続文字列
+- `DATABASE_URL`: ユーザー名・パスワードを含めないNeonのJDBC接続先
+- `SPRING_DATASOURCE_USERNAME`: NeonのDBユーザー名
+- `SPRING_DATASOURCE_PASSWORD`: NeonのDBパスワード
 - `SPRING_DATASOURCE_DRIVER_CLASS_NAME`: `org.postgresql.Driver`
 - `SPRING_PROFILES_ACTIVE`: `prod`
 
@@ -59,6 +61,7 @@ Render再起動後もデータが残るよう、無料のNeon PostgreSQLを使�
 - ThymeleafのエスケープとCSPでXSSを多層防御
 - HSTS、クリックジャッキング防止、権限制限ヘッダーを付与
 - DB接続情報はRenderの秘密設定だけで管理
+- DBパスワードは接続先と分離し、起動ログへ出力しない
 - 実行コンテナは非管理者ユーザーで起動
 
 一般ユーザーがDBやSQLを直接操作する機能はありません。アプリを通じて自分の日記だけを扱えます。
