@@ -69,20 +69,16 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/", true)
                 .permitAll()
             )
-            .headers(headers -> headers
-                .contentSecurityPolicy(csp -> csp
-                    .policyDirectives(CONTENT_SECURITY_POLICY)
-                )
-                .referrerPolicy(referrer -> referrer
-                    .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
-                )
-                .permissionsPolicy(permissions -> permissions
-                    .policy("camera=(), geolocation=(), microphone=(), payment=()")
-                )
-                .crossOriginOpenerPolicy(opener -> opener
-                    .policy(CrossOriginOpenerPolicyHeaderWriter.CrossOriginOpenerPolicy.SAME_ORIGIN)
-                )
-            )
+            .headers(headers -> {
+                headers.contentSecurityPolicy(csp -> csp
+                    .policyDirectives(CONTENT_SECURITY_POLICY));
+                headers.referrerPolicy(referrer -> referrer
+                    .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER));
+                headers.permissionsPolicy(permissions -> permissions
+                    .policy("camera=(), geolocation=(), microphone=(), payment=()"));
+                headers.crossOriginOpenerPolicy(opener -> opener
+                    .policy(CrossOriginOpenerPolicyHeaderWriter.CrossOriginOpenerPolicy.SAME_ORIGIN));
+            })
             .userDetailsService(customUserDetailsService);
 
         return http.build();
