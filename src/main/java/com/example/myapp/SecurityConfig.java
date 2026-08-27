@@ -73,6 +73,9 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
+                    "/h2-console/**"
+                ).denyAll()
+                .requestMatchers(
                     "/register",
                     "/error",
                     "/css/**",
