@@ -575,6 +575,7 @@ body.register-page a:hover {
   height: 42px;
   line-height: 1.2 !important;
   vertical-align: middle;
+  transform: translateY(4px);
   margin: 0 !important;
   white-space: nowrap;
 }
@@ -963,6 +964,7 @@ td button:hover {
     display: block;
     height: auto;
     line-height: 1.2 !important;
+    transform: none;
     margin-bottom: 8px !important;
   }
 
