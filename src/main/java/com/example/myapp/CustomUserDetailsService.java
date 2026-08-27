@@ -36,17 +36,17 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        log.debug("一般ユーザーの認証処理を開始します。ユーザー名: {}", username);
+        log.debug("一般ユーザーの認証処理を開始します。");
 
         final User user = userService.findByUsername(username);
 
         // ユーザーが存在しない場合は認証失敗として例外を送出します。
         if (user == null) {
-            log.warn("認証に失敗しました。ユーザーが存在しません。ユーザー名: {}", username);
+            log.warn("認証に失敗しました。ユーザーが存在しません。");
             throw new UsernameNotFoundException("ユーザー名またはパスワードが正しくありません。");
         }
 
-        log.debug("認証対象ユーザーを取得しました。ユーザー名: {}", username);
+        log.debug("認証対象ユーザーを取得しました。");
 
         // DBに保存されたBCryptハッシュ化パスワードをSpring Securityへ渡し、認証処理を委譲します。
         // 一般ユーザーにはUSERロールを付与します。

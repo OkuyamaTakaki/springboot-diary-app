@@ -78,6 +78,22 @@ function toggleDiaryForm() {
  * ページ読み込み後にサーバーから渡された通知メッセージを確認します。
  */
 document.addEventListener("DOMContentLoaded", function () {
+    const diaryFormToggle = document.getElementById("diaryFormToggle");
+    const sortSelect = document.getElementById("sort");
+    const editCancelButton = document.getElementById("editCancelButton");
+
+    diaryFormToggle?.addEventListener("click", toggleDiaryForm);
+    sortSelect?.addEventListener("change", function () {
+        sortSelect.form?.requestSubmit();
+    });
+    editCancelButton?.addEventListener("click", closeEditModal);
+
+    document.querySelectorAll(".btn-edit").forEach(function (button) {
+        button.addEventListener("click", function () {
+            openEditModal(button);
+        });
+    });
+
     const registerSuccessMessage = document.getElementById("registerSuccessMessage");
     const registerErrorMessage = document.getElementById("registerErrorMessage");
     const diaryErrorMessage = document.getElementById("diaryErrorMessage");

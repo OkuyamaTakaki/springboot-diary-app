@@ -40,7 +40,6 @@
         type="button"
         id="diaryFormToggle"
         class="diary-form-toggle"
-        onclick="toggleDiaryForm()"
         aria-controls="diaryWriteForm"
         aria-expanded="false"
       >
@@ -124,7 +123,6 @@
             id="sort"
             name="sort"
             class="sort-select"
-            onchange="this.form.submit()"
             aria-label="日記の並び順"
           >
             <option
@@ -237,7 +235,13 @@
 
               <td data-label="操作" class="action-cell">
                 <div class="row-actions">
-                  <button type="button" class="btn-edit" th:attr="data-id=${diary.id}" onclick="openEditModal(this)">編集</button>
+                  <button
+                    type="button"
+                    class="btn-edit"
+                    th:attr="data-id=${diary.id}"
+                  >
+                    編集
+                  </button>
                 </div>
               </td>
             </tr>
@@ -352,8 +356,8 @@
 
           <button
             type="button"
+            id="editCancelButton"
             class="btn-secondary"
-            onclick="closeEditModal()"
           >
             キャンセル
           </button>
@@ -372,6 +376,6 @@
     hidden
   ></div>
 
-  <script th:src="@{/js/diary.js(v=20260827-4)}"></script>
+  <script th:src="@{/js/diary.js(v=20260827-5)}"></script>
 </body>
 </html>

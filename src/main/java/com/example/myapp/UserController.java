@@ -1,7 +1,11 @@
 package com.example.myapp;
 
+import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,8 +21,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private static final int USERNAME_MAX_LENGTH = 100;
-    private static final int PASSWORD_MAX_LENGTH = 100;
+    private static final int USERNAME_MIN_LENGTH = 3;
+    private static final int USERNAME_MAX_LENGTH = 50;
+    private static final int PASSWORD_MIN_LENGTH = 8;
+    private static final int PASSWORD_MAX_LENGTH = 72;
+    private static final int PASSWORD_MAX_BYTES = 72;
+    private static final Pattern USERNAME_PATTERN = Pattern.compile(
+            "[\\p{L}\\p{N}._-]{3,50}");
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -64,7 +73,7 @@ public class UserController {
 
     /**
      * 新規ユーザーを登録します。
-     * 空欄チェックと文字数チェックをサーバー側で実行します。
+     * 形式・長さをサーバー側でも検証し、BCryptの安全な入力上限を守ります。
      *
      * @param username 登録するユーザー名
      * @param password 登録するパスワード
@@ -79,7 +88,7 @@ public class UserController {
             final Model model,
             final RedirectAttributes redirectAttributes) {
 
-        log.info("ユーザー登録処理を開始します。ユーザー名: {}", username);
+        log.info("ユーザー登録処理を開始します。");
 
         // 空欄入力を拒否します。
         if (username == null || username.isBlank()
@@ -92,30 +101,42 @@ public class UserController {
             return "register";
         }
 
-        // ユーザー名とパスワードの最大文字数をサーバー側で検証します。
-        if (!inputValidationService.isWithinMaxLength(
-                username, USERNAME_MAX_LENGTH)
-                || !inputValidationService.isWithinMaxLength(
-                        password, PASSWORD_MAX_LENGTH)) {
+        final String normalizedUsername = username.strip();
 
-            log.warn("登録エラー：入力文字数が上限を超えています。");
+        // 制御文字や空白を含む名前を拒否し、DB列と同じ文字数で検証します。
+        if (normalizedUsername.length() < USERNAME_MIN_LENGTH
+                || !inputValidationService.isWithinMaxLength(
+                        normalizedUsername, USERNAME_MAX_LENGTH)
+                || !USERNAME_PATTERN.matcher(normalizedUsername).matches()) {
+            log.warn("登録エラー：ユーザー名が利用条件を満たしていません。");
 
             model.addAttribute(
                     "registerErrorMessage",
-                    "入力できる文字数を超えています。\n\n"
-                            + "ユーザー名：100文字以内\n"
-                            + "パスワード：100文字以内");
-            model.addAttribute("username", username);
+                    "ユーザー名は3〜50文字で入力してください。\n"
+                            + "使用できる文字は、文字・数字・ピリオド・ハイフン・アンダーバーです。");
+            model.addAttribute("username", normalizedUsername);
+            return "register";
+        }
+
+        final int passwordByteLength = password.getBytes(StandardCharsets.UTF_8).length;
+        if (password.length() < PASSWORD_MIN_LENGTH
+                || !inputValidationService.isWithinMaxLength(
+                        password, PASSWORD_MAX_LENGTH)
+                || passwordByteLength > PASSWORD_MAX_BYTES) {
+            log.warn("登録エラー：パスワードが利用条件を満たしていません。");
+            model.addAttribute(
+                    "registerErrorMessage",
+                    "パスワードは8文字以上で入力してください。\n"
+                            + "安全な暗号化の上限は半角72文字相当です。");
+            model.addAttribute("username", normalizedUsername);
             return "register";
         }
 
         // 同じユーザー名が登録済みでないか確認します。
-        if (userService.findByUsername(username) != null) {
-            log.warn(
-                    "登録エラー：ユーザー名がすでに登録されています。ユーザー名: {}",
-                    username);
+        if (userService.findByUsername(normalizedUsername) != null) {
+            log.warn("登録エラー：ユーザー名がすでに登録されています。");
 
-            redirectAttributes.addFlashAttribute("username", username);
+            redirectAttributes.addFlashAttribute("username", normalizedUsername);
             redirectAttributes.addFlashAttribute(
                     "registerErrorMessage",
                     "そのユーザー名は既に登録されています。\n"
@@ -126,15 +147,25 @@ public class UserController {
 
         // パスワードはデータベースへ保存する前にハッシュ化します。
         final String encryptedPassword = passwordEncoder.encode(password);
-        final User user = new User(username, encryptedPassword);
+        final User user = new User(normalizedUsername, encryptedPassword);
 
-        userService.saveUser(user);
+        try {
+            userService.saveUser(user);
+        } catch (DataIntegrityViolationException exception) {
+            log.warn("登録エラー：同じユーザー名が同時に登録されました。");
+            redirectAttributes.addFlashAttribute("username", normalizedUsername);
+            redirectAttributes.addFlashAttribute(
+                    "registerErrorMessage",
+                    "そのユーザー名は既に登録されています。\n"
+                            + "別のユーザー名をご利用ください。");
+            return "redirect:/register";
+        }
 
-        log.info("ユーザー登録が完了しました。ユーザー名: {}", username);
+        log.info("ユーザー登録が完了しました。");
 
         redirectAttributes.addFlashAttribute(
                 "successMessage",
-                "ユーザー名「" + username + "」を登録しました。");
+                "ユーザー名「" + normalizedUsername + "」を登録しました。");
 
         return "redirect:/login";
     }

@@ -30,11 +30,11 @@ public class UserService {
      */
     @Transactional
     public User saveUser(final User user) {
-        log.info("ユーザー登録処理を開始します。ユーザー名: {}", user.getUsername());
+        log.debug("ユーザー情報をデータベースへ保存します。");
 
         final User savedUser = userRepository.save(user);
 
-        log.info("ユーザー登録が完了しました。ユーザー名: {}", savedUser.getUsername());
+        log.debug("ユーザー情報の保存が完了しました。");
         return savedUser;
     }
 
@@ -46,7 +46,7 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public User findByUsername(final String username) {
-        log.debug("ユーザー検索を実行します。ユーザー名: {}", username);
+        log.debug("ユーザー名による検索を実行します。");
         return userRepository.findByUsername(username).orElse(null);
     }
 }

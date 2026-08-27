@@ -105,7 +105,16 @@ body:has(.diary-table) .container { padding: 28px 30px 38px 84px; }
 .toggle-icon { margin-left: 14px; }
 .diary-form-container { display: none; margin-top: 14px; }
 .diary-form-container form, .login-page form, .register-page form, #editForm { padding: 22px; background: rgba(255, 255, 255, 0.76); border: 1px solid rgba(99, 124, 142, 0.22); border-radius: 8px; }
-.form-group + .form-group { margin-top: 16px; }
+.form-group + .form-group {
+    margin-top: 16px;
+}
+
+.form-hint {
+  margin: 7px 2px 0;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
 label { display: block; margin-bottom: 6px; color: var(--navy-dark); font-size: 0.92rem; font-weight: 700; }
 input[type="text"], input[type="password"], input[type="date"], textarea, select { width: 100%; padding: 10px 12px; color: var(--ink); background: rgba(255, 255, 255, 0.92); border: 1px solid #afbdc5; border-radius: 6px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
 textarea { min-height: 150px; resize: vertical; }

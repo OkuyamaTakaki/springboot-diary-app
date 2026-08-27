@@ -130,6 +130,18 @@ class DiaryControllerTest {
         verify(diaryRepository, never()).save(any(Diary.class));
     }
 
+    @Test
+    void cannotReadAnotherUsersDiary() throws Exception {
+        final User other = new User("bob", "encodedPassword");
+        setId(other, 2L);
+        final Diary diary = diary("他人の日記", "ありがとう", other);
+        setId(diary, 12L);
+        when(diaryRepository.findById(12L)).thenReturn(Optional.of(diary));
+
+        assertThat(controller.getDiary(12L, authentication).getStatusCode())
+                .isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
     private Diary diary(final String title, final String content, final User owner) {
         final Diary diary = new Diary(title, content);
         diary.setUser(owner);
