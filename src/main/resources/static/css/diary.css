@@ -573,7 +573,7 @@ body.register-page a:hover {
   display: inline-flex !important;
   align-items: center;
   height: 42px;
-  line-height: 42px !important;
+  line-height: 1.2 !important;
   vertical-align: middle;
   margin: 0 !important;
   white-space: nowrap;
@@ -589,7 +589,7 @@ body.register-page a:hover {
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: bold;
-  line-height: 1.2;
+  line-height: normal;
   background-color: var(--color-form-background);
   border: 2px solid var(--color-border);
   border-radius: 10px;
