@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * 日記の登録、一覧表示、取得、更新、削除を担当するコントローラー。
+ * 日記の登録、一覧表示、取得、更新を担当するコントローラー。
  */
 @Controller
 public class DiaryController {
@@ -281,26 +280,6 @@ public class DiaryController {
         return ResponseEntity.ok("更新しました");
     }
 
-    /** ログインユーザー本人の日記だけを削除する。 */
-    @DeleteMapping("/api/diary/{id}")
-    public ResponseEntity<String> deleteDiary(
-            @PathVariable final Long id,
-            final Authentication authentication) {
-
-        final String username = authentication.getName();
-        final User user = userService.findByUsername(username);
-        final Diary diary = diaryRepository.findById(id).orElse(null);
-
-        if (diary == null || !diary.getUser().getId().equals(user.getId())) {
-            log.warn("日記の削除を拒否しました。ID: {}, ユーザー: {}", id, username);
-            return ResponseEntity.notFound().build();
-        }
-
-        diaryRepository.delete(diary);
-        log.info("日記を削除しました。ID: {}, ユーザー: {}", id, username);
-        return ResponseEntity.ok("削除しました");
-    }
-
     /**
      * 日記一覧画面に必要なデータをModelへ設定する。
      *
@@ -320,7 +299,7 @@ public class DiaryController {
 
         final int safePage = Math.max(page, 0);
         final Sort.Direction direction = parseSortDirection(sort);
-        final Pageable pageable = PageRequest.of(
+        final Pageable requestedPageable = PageRequest.of(
                 safePage,
                 DIARIES_PER_PAGE,
                 Sort.by(direction, SORT_FIELD));
@@ -328,20 +307,22 @@ public class DiaryController {
         final boolean searchActive = searchDate != null && !searchDate.isBlank();
         final LocalDate searchLocalDate = parseSearchDate(searchDate);
         final boolean invalidSearchDate = searchActive && searchLocalDate == null;
-        final Page<Diary> diaryPage;
+        Page<Diary> diaryPage = findDiaryPage(
+                user,
+                searchLocalDate,
+                invalidSearchDate,
+                requestedPageable);
 
-        if (invalidSearchDate) {
-            diaryPage = Page.empty(pageable);
-        } else if (searchLocalDate != null) {
-            final LocalDateTime startOfDay = searchLocalDate.atStartOfDay();
-            final LocalDateTime startOfNextDay = searchLocalDate.plusDays(1).atStartOfDay();
-            diaryPage = diaryRepository.findByUserAndUpdatedAtBetween(
+        if (diaryPage.getTotalPages() > 0 && safePage >= diaryPage.getTotalPages()) {
+            final Pageable lastPageable = PageRequest.of(
+                    diaryPage.getTotalPages() - 1,
+                    DIARIES_PER_PAGE,
+                    Sort.by(direction, SORT_FIELD));
+            diaryPage = findDiaryPage(
                     user,
-                    startOfDay,
-                    startOfNextDay,
-                    pageable);
-        } else {
-            diaryPage = diaryRepository.findByUser(user, pageable);
+                    searchLocalDate,
+                    invalidSearchDate,
+                    lastPageable);
         }
 
         model.addAttribute("diaries", diaryPage.getContent());
@@ -352,6 +333,38 @@ public class DiaryController {
         model.addAttribute("searchDate", searchDate);
         model.addAttribute("searchActive", searchActive);
         model.addAttribute("invalidSearchDate", invalidSearchDate);
+    }
+
+    /**
+     * 検索条件とページ指定に対応する日記を取得する。
+     *
+     * @param user ログインユーザー
+     * @param searchDate 検索日。未指定の場合はnull
+     * @param invalidSearchDate 検索日が不正な場合はtrue
+     * @param pageable ページ指定
+     * @return 日記のページ
+     */
+    private Page<Diary> findDiaryPage(
+            final User user,
+            final LocalDate searchDate,
+            final boolean invalidSearchDate,
+            final Pageable pageable) {
+
+        if (invalidSearchDate) {
+            return Page.empty(pageable);
+        }
+
+        if (searchDate == null) {
+            return diaryRepository.findByUser(user, pageable);
+        }
+
+        final LocalDateTime startOfDay = searchDate.atStartOfDay();
+        final LocalDateTime startOfNextDay = searchDate.plusDays(1).atStartOfDay();
+        return diaryRepository.findByUserAndUpdatedAtBetween(
+                user,
+                startOfDay,
+                startOfNextDay,
+                pageable);
     }
 
     /**

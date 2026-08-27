@@ -13,7 +13,7 @@
   >
 
   <title>マイページ - 日記アプリ</title>
-  <link rel="stylesheet" th:href="@{/css/diary.css(v=20260827-3)}">
+  <link rel="stylesheet" th:href="@{/css/diary.css(v=20260827-4)}">
 </head>
 
 <body>
@@ -238,7 +238,6 @@
               <td data-label="操作" class="action-cell">
                 <div class="row-actions">
                   <button type="button" class="btn-edit" th:attr="data-id=${diary.id}" onclick="openEditModal(this)">編集</button>
-                  <button type="button" class="btn-delete" th:attr="data-id=${diary.id},data-title=${diary.title}" onclick="openDeleteModal(this)">削除</button>
                 </div>
               </td>
             </tr>
@@ -363,19 +362,6 @@
     </div>
   </div>
 
-  <!-- 誤操作を防ぐ削除確認モーダル -->
-  <div id="deleteModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" aria-hidden="true">
-    <div class="modal-content modal-content-small">
-      <div class="danger-icon" aria-hidden="true">!</div>
-      <h2 id="deleteModalTitle">日記を削除しますか？</h2>
-      <p><strong id="deleteDiaryTitle"></strong> は削除後に元へ戻せません。</p>
-      <div class="modal-actions">
-        <button type="button" id="confirmDeleteButton" class="btn-danger">削除する</button>
-        <button type="button" class="btn-secondary" onclick="closeDeleteModal()">キャンセル</button>
-      </div>
-    </div>
-  </div>
-
   <!-- 登録・更新結果を表示する共通通知モーダル -->
   <div th:replace="~{fragments/notification :: notification}"></div>
 
@@ -386,6 +372,6 @@
     hidden
   ></div>
 
-  <script th:src="@{/js/diary.js}"></script>
+  <script th:src="@{/js/diary.js(v=20260827-4)}"></script>
 </body>
 </html>

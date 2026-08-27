@@ -169,18 +169,23 @@ document.addEventListener("DOMContentLoaded", function () {
         const id = editForm.dataset.id;
         const title = document.getElementById("editTitle").value;
         const content = document.getElementById("editContent").value;
-        const csrfToken = document.getElementById("csrfToken").value;
+        const csrfInput = document.getElementById("csrfToken");
+
+        if (!csrfInput) {
+            showNotification("セキュリティ情報を取得できませんでした。", "stay");
+            return;
+        }
 
         const formData = new URLSearchParams();
         formData.append("title", title);
         formData.append("content", content);
+        formData.append(csrfInput.name, csrfInput.value);
 
         try {
             const response = await fetch(`/api/diary/${id}`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "X-CSRF-TOKEN": csrfToken
+                    "Content-Type": "application/x-www-form-urlencoded"
                 },
                 body: formData
             });
@@ -214,64 +219,8 @@ function closeEditModal() {
     modal.setAttribute("aria-hidden", "true");
 }
 
-/** 削除対象を確認モーダルへ設定します。 */
-function openDeleteModal(button) {
-    const modal = document.getElementById("deleteModal");
-    const title = document.getElementById("deleteDiaryTitle");
-    const confirmButton = document.getElementById("confirmDeleteButton");
-    if (!modal || !title || !confirmButton) {
-        return;
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+        closeEditModal();
     }
-
-    confirmButton.dataset.id = button.dataset.id;
-    title.textContent = `「${button.dataset.title}」`;
-    modal.style.display = "flex";
-    modal.setAttribute("aria-hidden", "false");
-    confirmButton.focus();
-}
-
-/** 削除確認モーダルを閉じます。 */
-function closeDeleteModal() {
-    const modal = document.getElementById("deleteModal");
-    if (modal) {
-        modal.style.display = "none";
-        modal.setAttribute("aria-hidden", "true");
-    }
-}
-
-/** 確認後に日記を削除します。 */
-document.addEventListener("DOMContentLoaded", function () {
-    const confirmButton = document.getElementById("confirmDeleteButton");
-    const csrfToken = document.getElementById("csrfToken");
-    if (!confirmButton || !csrfToken) {
-        return;
-    }
-
-    confirmButton.addEventListener("click", async function () {
-        confirmButton.disabled = true;
-        try {
-            const response = await fetch(`/api/diary/${confirmButton.dataset.id}`, {
-                method: "DELETE",
-                headers: { "X-CSRF-TOKEN": csrfToken.value }
-            });
-            if (!response.ok) {
-                throw new Error("delete failed");
-            }
-            closeDeleteModal();
-            showNotification("日記を削除しました。", "reload");
-        } catch (error) {
-            console.error("日記の削除中にエラーが発生しました。", error);
-            closeDeleteModal();
-            showNotification("日記を削除できませんでした。時間をおいて再度お試しください。", "stay");
-        } finally {
-            confirmButton.disabled = false;
-        }
-    });
-
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-            closeEditModal();
-            closeDeleteModal();
-        }
-    });
 });
