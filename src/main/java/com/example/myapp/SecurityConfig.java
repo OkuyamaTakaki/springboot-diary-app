@@ -77,6 +77,7 @@ public class SecurityConfig {
                 ).denyAll()
                 .requestMatchers(
                     "/register",
+                    "/health",
                     "/error",
                     "/css/**",
                     "/js/**"

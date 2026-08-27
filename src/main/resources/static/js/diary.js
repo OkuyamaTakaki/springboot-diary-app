@@ -49,6 +49,7 @@ function showNotification(message, type = "reload") {
  * 日記入力フォームを開閉し、ボタンの表示を切り替えます。
  */
 function toggleDiaryForm() {
+    const toggle = document.getElementById("diaryFormToggle");
     const form = document.getElementById("diaryWriteForm");
     const text = document.getElementById("diaryFormToggleText");
     const icon = document.getElementById("diaryFormToggleIcon");
@@ -62,10 +63,12 @@ function toggleDiaryForm() {
 
     if (isOpen) {
         form.style.display = "none";
+        toggle?.setAttribute("aria-expanded", "false");
         text.textContent = "日記を書く";
         icon.textContent = "▼";
     } else {
         form.style.display = "block";
+        toggle?.setAttribute("aria-expanded", "true");
         text.textContent = "日記を閉じる";
         icon.textContent = "▲";
     }
@@ -142,7 +145,7 @@ async function openEditModal(button) {
             errorMessage.textContent = "";
         }
 
-        modal.style.display = "block";
+        modal.style.display = "flex";
         modal.setAttribute("aria-hidden", "false");
     } catch (error) {
         console.error("日記の取得中にエラーが発生しました。", error);
@@ -210,3 +213,65 @@ function closeEditModal() {
     modal.style.display = "none";
     modal.setAttribute("aria-hidden", "true");
 }
+
+/** 削除対象を確認モーダルへ設定します。 */
+function openDeleteModal(button) {
+    const modal = document.getElementById("deleteModal");
+    const title = document.getElementById("deleteDiaryTitle");
+    const confirmButton = document.getElementById("confirmDeleteButton");
+    if (!modal || !title || !confirmButton) {
+        return;
+    }
+
+    confirmButton.dataset.id = button.dataset.id;
+    title.textContent = `「${button.dataset.title}」`;
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+    confirmButton.focus();
+}
+
+/** 削除確認モーダルを閉じます。 */
+function closeDeleteModal() {
+    const modal = document.getElementById("deleteModal");
+    if (modal) {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+    }
+}
+
+/** 確認後に日記を削除します。 */
+document.addEventListener("DOMContentLoaded", function () {
+    const confirmButton = document.getElementById("confirmDeleteButton");
+    const csrfToken = document.getElementById("csrfToken");
+    if (!confirmButton || !csrfToken) {
+        return;
+    }
+
+    confirmButton.addEventListener("click", async function () {
+        confirmButton.disabled = true;
+        try {
+            const response = await fetch(`/api/diary/${confirmButton.dataset.id}`, {
+                method: "DELETE",
+                headers: { "X-CSRF-TOKEN": csrfToken.value }
+            });
+            if (!response.ok) {
+                throw new Error("delete failed");
+            }
+            closeDeleteModal();
+            showNotification("日記を削除しました。", "reload");
+        } catch (error) {
+            console.error("日記の削除中にエラーが発生しました。", error);
+            closeDeleteModal();
+            showNotification("日記を削除できませんでした。時間をおいて再度お試しください。", "stay");
+        } finally {
+            confirmButton.disabled = false;
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeEditModal();
+            closeDeleteModal();
+        }
+    });
+});

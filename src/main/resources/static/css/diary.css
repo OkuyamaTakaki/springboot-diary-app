@@ -1,1260 +1,182 @@
 @charset "UTF-8";
 
-/* アプリ全体で使用する色をCSS変数として定義します。 */
 :root {
-  --color-paper: #f7f1e4;
-  --color-paper-deep: #efe4cf;
-  --color-ink: #2f3c2d;
-  --color-ink-soft: #59675c;
-  --color-primary: #5d7d5a;
-  --color-primary-dark: #405b43;
-  --color-primary-light: #7fa36e;
-  --color-accent: #d8b46a;
-  --color-accent-soft: #f0dfba;
-  --color-button-light: #d7c39e;
-  --color-button-hover: #e8d4a5;
-  --color-muted: #9ca794;
-  --color-border: #d2c4a6;
-  --color-error: #b94843;
-  --color-error-background: #fbe9e2;
-  --color-form-background: #fbf7f1;
-  --color-white: #fffdf9;
-  --shadow-soft: 0 10px 24px rgba(89, 79, 62, 0.08);
-  --shadow-card: 0 16px 32px rgba(80, 68, 53, 0.1);
+  --paper: #fffdf5;
+  --paper-edge: #dfd0ae;
+  --rule: rgba(92, 151, 183, 0.2);
+  --margin-line: rgba(214, 104, 104, 0.42);
+  --ink: #28384a;
+  --ink-soft: #617083;
+  --navy: #35556f;
+  --navy-dark: #263f54;
+  --green: #557965;
+  --green-dark: #3f5d4d;
+  --yellow: #f4df9b;
+  --red: #b95454;
+  --red-dark: #8f3838;
+  --white: #fff;
+  --shadow: 0 18px 45px rgba(54, 45, 31, 0.14);
+  --shadow-small: 0 7px 18px rgba(54, 45, 31, 0.1);
 }
 
-/* 全要素のサイズ計算と標準余白を統一します。 */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* ページ全体の基準文字サイズを設定します。 */
-html {
-  font-size: 16px;
-}
-
-/* 全ページ共通の背景、文字色、フォント、行間を設定します。 */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
 body {
   min-height: 100vh;
-  padding: 24px 16px;
+  padding: 28px 18px 48px;
+  color: var(--ink);
+  font-family: "M PLUS Rounded 1c", "Yu Gothic", Meiryo, sans-serif;
+  line-height: 1.75;
   background:
-    linear-gradient(
-      rgba(255, 255, 255, 0.2),
-      rgba(255, 255, 255, 0.2)
-    ),
-    repeating-linear-gradient(
-      0deg,
-      #f4efe5 0,
-      #f4efe5 1px,
-      #f8f3eb 1px,
-      #f8f3eb 8px
-    );
-  color: var(--color-ink);
-  font-family: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
-  line-height: 1.8;
+    radial-gradient(circle at 12% 10%, rgba(255, 255, 255, 0.82), transparent 30%),
+    linear-gradient(135deg, #ddd1b8 0%, #c8b99b 100%);
+  background-attachment: fixed;
 }
+button, input, select, textarea { font: inherit; }
+a { color: var(--navy); font-weight: 700; text-underline-offset: 4px; }
+a:hover { color: var(--green-dark); }
 
-/* ログイン・新規登録画面ではbodyをカード化せず、背景のみを設定します。 */
-body.login-page,
-body.register-page {
-  max-width: none !important;
-  margin: 0 !important;
-  padding: 40px 20px !important;
-  background-color: var(--color-background) !important;
-  border: none !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
-/* ログイン・新規登録画面の入力エリアを中央カードとして表示します。 */
-body.login-page .container,
-body.register-page .register-container {
-  width: 100%;
-  max-width: 460px;
-  margin: 0 auto;
-  padding: 30px;
-  background-color: var(--color-white);
-  border-left: 8px solid var(--color-primary);
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(44, 74, 62, 0.06);
-}
-
-/* 新規登録画面では専用カラーを使用します。 */
-body.register-page .register-container {
-  border-left-color: #4caf50;
-  box-shadow: 0 8px 24px rgba(76, 175, 80, 0.1);
-}
-
-/* ログイン・新規登録画面にアプリ名を表示します。 */
-.app-brand {
-  margin-bottom: 20px;
-  color: var(--color-primary-dark);
-  font-size: 1.8rem;
-  font-weight: 700;
-  line-height: 1.4;
-  text-align: center;
-}
-
-/* 新規登録画面ではアプリ名にも登録画面の専用カラーを使用します。 */
-body.register-page .app-brand {
-  color: #3f9142;
-}
-
-/* 日記画面のヘッダーをカードとして表示し、左右に要素を配置します。 */
-.site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto 18px;
-  padding: 20px 22px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,241,229,0.96));
-  border: 1px solid rgba(146, 123, 92, 0.22);
-  border-left: 10px solid var(--color-primary);
-  border-radius: 22px;
-  box-shadow: var(--shadow-soft);
-}
-
-/* ヘッダー見出しの標準余白を解除してログアウトボタンと位置を揃えます。 */
-.site-header h1 {
-  margin: 0;
-}
-
-/* ログアウトフォームを通常フォームのデザイン対象から除外します。 */
-.site-header .logout-form {
-  width: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  background: none !important;
-}
-
-/* ログアウトボタンをヘッダー内に収まるコンパクトなサイズにします。 */
-.site-header .logout-form button {
-  display: inline-block !important;
-  width: auto !important;
-  margin: 0 !important;
-  padding: 6px 14px !important;
-  color: var(--color-white) !important;
-  font-family: inherit !important;
-  font-size: 0.9rem !important;
-  background-color: #4caf50 !important;
-  border: none !important;
-  border-radius: 20px !important;
-  box-shadow: 0 3px 0 #3f9142 !important;
-}
-
-/* ログアウトボタンのホバー時に押下感を表現します。 */
-.site-header .logout-form button:hover {
-  background-color: #5fcf63 !important;
-  transform: translateY(2px) !important;
-  box-shadow: 0 1px 0 #3f9142 !important;
-}
-
-/* 日記画面のメインコンテンツを広めの中央カードとして表示します。 */
-body:has(table) .container {
-  width: 100%;
-  max-width: 1200px !important;
-  margin: 0 auto 24px !important;
-  padding: 22px 20px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(248,241,229,0.96));
-  border: 1px solid rgba(146, 123, 92, 0.22);
-  border-left: 10px solid var(--color-primary) !important;
-  border-radius: 24px !important;
-  box-shadow: var(--shadow-card);
-}
-
-/* エラー画面を通常画面と同じ文房具風デザインで表示します。 */
+.site-header,
+body:has(.diary-table) .container,
+.login-page .container,
+.register-page .register-container,
 .error-container {
-  max-width: 600px;
-  margin: 12vh auto 0;
-  padding: 32px;
-  background: rgba(255, 255, 255, 0.94);
-  border-left: 8px solid var(--color-error);
-  border-radius: 18px;
-  box-shadow: var(--shadow-card);
-  text-align: center;
-}
-
-.error-container h1 {
-  margin-bottom: 16px;
-}
-
-.error-container p {
-  margin-bottom: 20px;
-}
-
-.error-container a {
-  margin-top: 0 !important;
-}
-
-/* ログイン・新規登録画面のアプリ名を表示します。 */
-.app-title {
-  margin-bottom: 25px;
-  text-align: center;
-}
-
-/* アプリ名をログイン・新規登録画面で統一した色にします。 */
-.app-title-main {
-  color: var(--color-primary-dark) !important;
-  font-size: 1.8rem;
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-/* アプリの説明を小さく表示します。 */
-.app-title-sub {
-  margin-top: 4px;
-  color: var(--color-muted) !important;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
-/* メイン見出しのサイズ、色、下線、余白を設定します。 */
-h1 {
-  margin-bottom: 16px;
-  padding-bottom: 10px;
-  color: var(--color-primary-dark) !important;
-  font-size: 1.6rem;
-  border-bottom: 2px dashed var(--color-muted) !important;
-}
-
-/* セクション見出しの基本スタイルを設定します。 */
-h2,
-h3 {
-  margin-top: 18px;
-  margin-bottom: 12px;
-  color: var(--color-primary-dark) !important;
-  font-size: 1.3rem;
-}
-
-/* 日記入力・一覧セクションの見出し上余白を調整します。 */
-.diary-write-section > h2,
-.diary-list-section > h2 {
-  margin-top: 0;
-}
-
-/* 編集モーダルの見出しはカード上端から余計な余白を作りません。 */
-.modal-content > h2 {
-  margin-top: 0;
-}
-
-/* 日記入力フォームの開閉ボタンをプルダウン風に表示します。 */
-.diary-form-toggle {
-  display: flex !important;
-  align-items: center;
-  justify-content: space-between;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 16px 20px !important;
-  color: var(--color-primary-dark) !important;
-  font-family: inherit !important;
-  font-size: 1.05rem !important;
-  font-weight: bold !important;
-  text-align: left !important;
-  background-color: var(--color-form-background) !important;
-  border: 2px solid var(--color-border) !important;
-  border-radius: 14px !important;
-  box-shadow: none !important;
-  cursor: pointer !important;
-}
-
-/* 日記入力フォームの開閉ボタンにマウスを重ねたときの表示を設定します。 */
-.diary-form-toggle:hover {
-  background-color: #eaf2e9 !important;
-  border-color: var(--color-primary-light) !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* プルダウンの矢印を見やすく配置します。 */
-.toggle-icon {
-  margin-left: 15px;
-  font-size: 0.85rem;
-  transition: transform 0.2s ease;
-}
-
-/* 日記入力フォームを閉じた状態では表示しません。 */
-.diary-form-container {
-  display: none;
-  margin-top: 10px;
-}
-
-/* 日記入力フォームを開いたときのフォーム領域を表示します。 */
-.diary-form-container form {
-  margin: 0;
-}
-
-/* 入力フォームを閉じるボタンをプルダウンの操作として表示します。 */
-.diary-form-close {
-  display: block !important;
-  width: 100% !important;
-  margin: 10px 0 0 !important;
-  padding: 10px !important;
-  color: var(--color-primary-dark) !important;
-  font-family: inherit !important;
-  font-size: 0.9rem !important;
-  font-weight: bold !important;
-  background-color: transparent !important;
-  border: 1px solid var(--color-border) !important;
-  border-radius: 10px !important;
-  box-shadow: none !important;
-  cursor: pointer !important;
-}
-
-/* 入力フォームを閉じるボタンのホバー状態を設定します。 */
-.diary-form-close:hover {
-  background-color: var(--color-form-background) !important;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* 通常リンクを緑色のテキストリンクとして表示します。 */
-a {
-  display: inline-block;
-  margin-top: 32px !important;
-  color: var(--color-primary) !important;
-  font-weight: bold;
-  text-decoration: none !important;
-  border-bottom: 1px dashed var(--color-primary) !important;
-}
-
-/* リンクのホバー時に色と下線を変更します。 */
-a:hover {
-  color: var(--color-primary-light) !important;
-  border-bottom-style: solid !important;
-}
-
-/* 通常フォームの背景と角丸を設定します。 */
-form:not([action*="logout"]):not(#editForm) {
-  padding: 24px !important;
-  background-color: var(--color-form-background) !important;
-  border-radius: 16px !important;
-}
-
-/* フォーム内のbrによる不要な改行を無効化します。 */
-form br {
-  display: none !important;
-}
-
-/* フォーム内の入力項目間に一定の間隔を設定します。 */
-form div {
-  margin-bottom: 15px !important;
-}
-
-/* ラベルを入力欄の上に配置します。 */
-label {
-  display: block !important;
-  margin-bottom: 8px !important;
-  color: var(--color-primary-dark) !important;
-  font-size: 0.95rem !important;
-  font-weight: bold !important;
-}
-
-/* テキスト入力、パスワード入力、本文入力のデザインを統一します。 */
-input[type="text"],
-input[type="password"],
-textarea {
-  display: block !important;
-  width: 100% !important;
-  margin-top: 8px !important;
-  padding: 12px !important;
-  color: var(--color-text) !important;
-  font-family: inherit !important;
-  font-size: 1rem !important;
-  background-color: var(--color-white) !important;
-  border: 2px solid var(--color-muted) !important;
-  border-radius: 12px !important;
-  outline: none !important;
-}
-
-/* 本文入力欄の最低高さとサイズ変更方向を設定します。 */
-textarea {
-  min-height: 150px;
-  resize: vertical;
-}
-
-/* 入力欄のフォーカス状態を視認しやすくします。 */
-input[type="text"]:focus,
-input[type="password"]:focus,
-textarea:focus {
-  background-color: #fdfdfb !important;
-  border-color: var(--color-primary-light) !important;
-}
-
-/* 通常の送信ボタンを共通デザインにします。 */
-button,
-button[type="submit"],
-input[type="submit"] {
-  display: block !important;
-  width: 100% !important;
-  margin-top: 32px !important;
-  padding: 12px !important;
-  color: var(--color-white) !important;
-  font-family: inherit !important;
-  font-size: 1rem !important;
-  font-weight: bold !important;
-  background-color: var(--color-primary-light) !important;
-  border: none !important;
-  border-radius: 30px !important;
-  box-shadow: 0 4px 0 var(--color-primary-dark) !important;
-  cursor: pointer !important;
-  transition: background-color 0.2s, transform 0.1s, box-shadow 0.1s;
-}
-
-/* ボタンのホバー時に押下感を表現します。 */
-button:hover,
-button[type="submit"]:hover,
-input[type="submit"]:hover {
-  background-color: #7cb55e !important;
-  transform: translateY(2px) !important;
-  box-shadow: 0 2px 0 var(--color-primary-dark) !important;
-}
-
-/* 新規登録画面の見出しとラベルを専用カラーに変更します。 */
-body.register-page .register-container h1,
-body.register-page label {
-  color: #3f9142 !important;
-}
-
-/* 新規登録画面の見出し下線を専用カラーに変更します。 */
-body.register-page .register-container h1 {
-  border-bottom-color: #8bcf70 !important;
-}
-
-/* 新規登録フォームの背景色を設定します。 */
-body.register-page form {
-  background-color: #f7fbf5 !important;
-}
-
-/* 新規登録画面の入力欄に専用カラーを使用します。 */
-body.register-page input[type="text"],
-body.register-page input[type="password"] {
-  background-color: var(--color-white) !important;
-  border-color: #8bcf70 !important;
-}
-
-/* 新規登録画面の入力フォーカス状態を設定します。 */
-body.register-page input[type="text"]:focus,
-body.register-page input[type="password"]:focus {
-  background-color: #fbfff9 !important;
-  border-color: #4caf50 !important;
-}
-
-/* 新規登録ボタンを専用カラーに変更します。 */
-body.register-page button[type="submit"] {
-  background-color: #62b84f !important;
-  box-shadow: 0 4px 0 #3f9142 !important;
-}
-
-/* 新規登録ボタンのホバー状態を設定します。 */
-body.register-page button[type="submit"]:hover {
-  background-color: #76c95f !important;
-  box-shadow: 0 2px 0 #3f9142 !important;
-}
-
-/* 新規登録画面のリンクを専用カラーに変更します。 */
-body.register-page a {
-  color: #4d9f45 !important;
-  border-bottom-color: #78bd6b !important;
-}
-
-/* 新規登録画面のリンクのホバー状態を設定します。 */
-body.register-page a:hover {
-  color: #358438 !important;
-}
-.diary-search-bar {
-  margin: 12px 0 16px;
-  padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.64);
-  border: 1px solid rgba(146, 123, 92, 0.18);
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(96, 83, 63, 0.05);
-}
-
-.search-form {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  width: 100%;
-  margin: 0 !important;
-  padding: 0 !important;
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-}
-
-.search-label {
-  margin: 0 !important;
-  white-space: nowrap;
-  font-weight: 700;
-  color: var(--color-primary-dark);
-}
-
-.search-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  justify-content: flex-end;
-}
-
-.search-input {
-  width: min(250px, 100%) !important;
-  min-width: 150px;
-  padding: 10px 12px !important;
-  background: var(--color-white) !important;
-  border: 1px solid var(--color-border) !important;
-  border-radius: 12px !important;
-  box-shadow: inset 0 1px 2px rgba(89, 79, 62, 0.04);
-}
-
-.btn-search,
-.btn-reset {
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  width: auto !important;
-  min-width: 90px;
-  margin: 0 !important;
-  padding: 10px 16px !important;
-  color: var(--color-ink) !important;
-  font-size: 0.9rem !important;
-  font-weight: 700 !important;
-  background: linear-gradient(180deg, var(--color-button-light), var(--color-button-hover)) !important;
-  border: 1px solid rgba(117, 100, 76, 0.28) !important;
-  border-radius: 999px !important;
-  box-shadow: 0 4px 0 rgba(111, 97, 72, 0.2) !important;
-  text-decoration: none !important;
-}
-
-.btn-reset {
-  min-width: auto;
-}
-
-.btn-search:hover,
-.btn-reset:hover {
-  transform: translateY(1px) !important;
-  box-shadow: 0 2px 0 rgba(111, 97, 72, 0.18) !important;
-}
-
-/* 日記一覧の見出しと並べ替え欄を横並びに配置します。 */
-.diary-list-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 10px;
-  margin-bottom: 12px;
-}
-
-/* 見出しの既定余白を解除し、並べ替え欄との位置を揃えます。 */
-.diary-list-header h2 {
-  margin: 0;
-}
-
-/* 並べ替えフォームを通常の入力フォームから独立させます。 */
-.sort-form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: auto;
-  min-height: 42px;
-  margin: 0;
-  padding: 0 !important;
-  background: none !important;
-  border-radius: 0 !important;
-}
-
-/* 並べ替えラベルを選択欄と横並びにします。 */
-.sort-label {
-  display: inline-flex !important;
-  align-items: center;
-  height: 42px;
-  line-height: 1.2 !important;
-  vertical-align: middle;
   position: relative;
-  top: 4px;
-  margin: 0 !important;
-  white-space: nowrap;
+  width: min(1180px, 100%);
+  margin-inline: auto;
+  background-color: var(--paper);
+  background-image: linear-gradient(90deg, transparent 0 62px, var(--margin-line) 62px 64px, transparent 64px), repeating-linear-gradient(0deg, transparent 0 31px, var(--rule) 31px 32px);
+  border: 1px solid var(--paper-edge);
+  border-radius: 7px 18px 18px 7px;
+  box-shadow: var(--shadow);
 }
-
-/* 新しい順・古い順を選択するプルダウンです。 */
-.sort-select {
-  display: block;
-  height: 42px;
-  min-width: 140px;
-  padding: 0 38px 0 14px;
-  color: var(--color-primary-dark);
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: bold;
-  line-height: normal;
-  background-color: var(--color-form-background);
-  border: 2px solid var(--color-border);
+.site-header::before,
+body:has(.diary-table) .container::before {
+  position: absolute;
+  top: 22px;
+  bottom: 22px;
+  left: 20px;
+  width: 17px;
+  content: "";
+  background: repeating-linear-gradient(0deg, #95866e 0 4px, transparent 4px 23px);
   border-radius: 10px;
-  outline: none;
-  cursor: pointer;
+  opacity: 0.42;
 }
+.site-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 18px; padding: 22px 28px 22px 84px; }
+.site-header h1 { color: var(--navy-dark); font-size: clamp(1.25rem, 3vw, 1.8rem); line-height: 1.4; }
+.logout-form { flex: 0 0 auto; }
+body:has(.diary-table) .container { padding: 28px 30px 38px 84px; }
+.diary-write-section { margin-bottom: 26px; }
 
-/* キーボード操作時にも選択位置を判別できるようにします。 */
-.sort-select:focus {
-  border-color: var(--color-primary-light);
-  box-shadow: 0 0 0 3px rgba(106, 153, 78, 0.18);
-}
-/* 日記一覧の横幅を確保し、必要な場合だけ横スクロールを許可します。 */
-.table-responsive,
-.table-wrapper {
-  width: 100% !important;
-  overflow-x: auto !important;
-}
-
-/* 日記一覧テーブルをPC画面で広く使えるように設定します。 */
-table {
-  width: 100% !important;
-  margin-top: 8px !important;
-  margin-bottom: 20px !important;
-  table-layout: fixed !important;
-  font-size: 0.95rem !important;
-  background-color: var(--color-white) !important;
-  border: none !important;
-  border-collapse: collapse !important;
-}
-
-/* 6列構成の日記一覧で各項目の表示幅を調整します。 */
-th:nth-child(1),
-td:nth-child(1) {
-  width: 13%;
-}
-
-th:nth-child(2),
-td:nth-child(2) {
-  width: 13%;
-}
-
-th:nth-child(3),
-td:nth-child(3) {
-  width: 10%;
-}
-
-th:nth-child(4),
-td:nth-child(4) {
-  width: 20%;
-}
-
-th:nth-child(5),
-td:nth-child(5) {
-  width: 34%;
-}
-
-th:nth-child(6),
-td:nth-child(6) {
-  width: 10%;
-}
-
-/* テーブルセルの左右余白と縦方向の位置を統一します。 */
-th,
-td {
-  padding-right: 12px !important;
-  padding-left: 12px !important;
-  vertical-align: middle !important;
-}
-
-/* テーブル見出しを濃い緑色で表示します。 */
-th {
-  height: 50px !important;
-  padding-top: 14px !important;
-  padding-bottom: 14px !important;
-  color: var(--color-white) !important;
-  font-weight: bold !important;
-  text-align: left !important;
-  background-color: var(--color-primary-dark) !important;
-  border: none !important;
-  border-bottom: 3px solid var(--color-text) !important;
-}
-
-/* 操作列を中央揃えにします。 */
-th:last-child,
-td:last-child {
-  text-align: center !important;
-}
-
-/* テーブル上端の角を丸くします。 */
-th:first-child {
-  border-top-left-radius: 8px !important;
-}
-
-th:last-child {
-  border-top-right-radius: 8px !important;
-}
-
-/* 日記データセルを白背景と下線で表示します。 */
-td {
-  min-height: 50px;
-  padding-top: 14px !important;
-  padding-bottom: 14px !important;
-  color: var(--color-text) !important;
-  text-align: left !important;
-  background-color: var(--color-white) !important;
-  border: none !important;
-  border-bottom: 1px solid var(--color-border) !important;
-  overflow-wrap: anywhere !important;
-  word-break: break-word !important;
-}
-
-/* 日記タイトルを本文より強調します。 */
-td:nth-child(4) {
-  color: var(--color-primary-dark);
-  font-weight: bold;
-}
-
-/* 本文が長い場合でもテーブルからはみ出さないようにします。 */
-td:nth-child(5) {
-  overflow-wrap: anywhere !important;
-}
-
-/* マウスオーバーした日記行を強調します。 */
-tbody tr:hover td {
-  background-color: #f4f7f4 !important;
-}
-
-/* 編集ボタンを操作列に収まるサイズに調整します。 */
-td button {
-  display: block !important;
-  width: 100% !important;
-  max-width: 70px !important;
-  margin: 0 auto !important;
-  padding: 6px 0 !important;
-  color: var(--color-text) !important;
-  font-family: inherit !important;
-  font-size: 0.85rem !important;
-  text-align: center !important;
-  background-color: var(--color-button-light) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 2px 0 var(--color-primary-light) !important;
-}
-
-/* 編集ボタンのホバー状態を設定します。 */
-td button:hover {
-  background-color: var(--color-button-hover) !important;
-  box-shadow: 0 1px 0 var(--color-primary-light) !important;
-}
-
-/* 日記が存在しない場合のメッセージを中央に表示します。 */
-.empty-message {
-  padding: 20px !important;
-  color: #718069 !important;
-  text-align: center !important;
-}
-
-/* ページネーションを中央に配置します。 */
-.pagination {
+.diary-form-toggle {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-/* ページネーションの操作ボタンを表示します。 */
-.pagination-button {
-  display: inline-block;
-  margin: 0 !important;
-  padding: 8px 18px;
-  color: var(--color-white) !important;
-  font-size: 0.9rem;
-  font-weight: bold;
-  background-color: var(--color-primary-light);
-  border: none !important;
-  border-radius: 20px;
-  box-shadow: 0 3px 0 var(--color-primary-dark);
-}
-
-/* ページネーションボタンのホバー状態を設定します。 */
-.pagination-button:hover {
-  color: var(--color-white) !important;
-  background-color: #7cb55e;
-  border-bottom: none !important;
-}
-
-/* 現在のページ番号を表示します。 */
-.pagination-info {
-  color: var(--color-primary-dark);
-  font-weight: bold;
-}
-
-/* 編集モーダルを画面全体に重ねて表示します。 */
-.modal {
-  display: none;
-  position: fixed !important;
-  z-index: 1000 !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  background-color: rgba(44, 74, 62, 0.4) !important;
-  overflow-y: auto !important;
-}
-
-/* 編集モーダルを中央のカードとして表示します。 */
-.modal-content {
-  position: relative !important;
-  width: 90% !important;
-  max-width: 500px !important;
-  margin: 60px auto !important;
-  padding: 30px !important;
-  background-color: var(--color-white) !important;
-  border-left: 10px solid var(--color-primary) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 12px 36px rgba(44, 74, 62, 0.2) !important;
-}
-
-/* 編集モーダル内の入力項目間の余白を調整します。 */
-.modal-content form div {
-  margin-bottom: 20px !important;
-  padding: 0 !important;
-  background: none !important;
-}
-
-/* 更新・キャンセルボタンを横並びに配置します。 */
-.modal-content form button {
-  display: inline-block !important;
-  width: calc(50% - 8px) !important;
-  margin-top: 20px !important;
-  margin-right: 12px !important;
-}
-
-/* キャンセルボタンを更新ボタンと区別します。 */
-.modal-content form button:last-child {
-  margin-right: 0 !important;
-  background-color: var(--color-muted) !important;
-  box-shadow: 0 4px 0 #718069 !important;
-}
-
-/* キャンセルボタンのホバー状態を設定します。 */
-.modal-content form button:last-child:hover {
-  background-color: var(--color-border) !important;
-}
-
-/* 通知ポップアップを画面中央に配置します。 */
-.notification-modal {
-  display: none;
-  position: fixed;
-  z-index: 2000;
-  inset: 0;
-  padding: 20px;
-  background-color: rgba(44, 74, 62, 0.45);
-  align-items: center;
-  justify-content: center;
-}
-
-/* aria-hidden=falseの通知ポップアップだけを表示します。 */
-.notification-modal[aria-hidden="false"] {
-  display: flex;
-}
-
-/* 通知内容を中央のカードとして表示します。 */
-.notification-modal-content {
-  width: 90%;
-  max-width: 460px;
-  padding: 35px 30px;
-  text-align: center;
-  background-color: var(--color-white);
-  border-left: 8px solid var(--color-primary);
-  border-radius: 20px;
-  box-shadow: 0 12px 36px rgba(44, 74, 62, 0.25);
-}
-
-/* 通知メッセージ内の改行を維持して表示します。 */
-#notificationMessage {
-  margin: 0;
-  color: var(--color-text);
-  font-size: 1.05rem;
-  font-weight: bold;
-  line-height: 1.8;
-  white-space: pre-line;
-}
-
-/* 通知ポップアップのOKボタンを中央配置します。 */
-#notificationOkButton {
-  display: block;
-  width: 140px;
-  margin: 25px auto 0;
-  padding: 10px 20px;
-  color: var(--color-white);
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: bold;
-  background-color: var(--color-primary-light);
-  border: none;
-  border-radius: 30px;
-  box-shadow: 0 4px 0 var(--color-primary-dark);
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 18px;
+  color: var(--navy-dark);
+  font-weight: 700;
+  text-align: left;
+  background: rgba(244, 223, 155, 0.58);
+  border: 1px solid #d9bd64;
+  border-radius: 5px;
+  box-shadow: 0 4px 0 rgba(141, 116, 49, 0.18);
   cursor: pointer;
 }
+.diary-form-toggle:hover { background: rgba(244, 223, 155, 0.82); }
+.toggle-icon { margin-left: 14px; }
+.diary-form-container { display: none; margin-top: 14px; }
+.diary-form-container form, .login-page form, .register-page form, #editForm { padding: 22px; background: rgba(255, 255, 255, 0.76); border: 1px solid rgba(99, 124, 142, 0.22); border-radius: 8px; }
+.form-group + .form-group { margin-top: 16px; }
+label { display: block; margin-bottom: 6px; color: var(--navy-dark); font-size: 0.92rem; font-weight: 700; }
+input[type="text"], input[type="password"], input[type="date"], textarea, select { width: 100%; padding: 10px 12px; color: var(--ink); background: rgba(255, 255, 255, 0.92); border: 1px solid #afbdc5; border-radius: 6px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+textarea { min-height: 150px; resize: vertical; }
+input:focus, textarea:focus, select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(53, 85, 111, 0.14); }
+button, .pagination-button, .btn-reset { border: 0; cursor: pointer; }
+button[type="submit"], .btn-primary, .btn-secondary, .btn-edit, .btn-delete, .btn-danger, .btn-search, .btn-reset, .pagination-button, .btn-text { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 9px 17px; color: var(--white); font-weight: 700; text-decoration: none; background: var(--green); border: 1px solid var(--green-dark); border-radius: 6px; box-shadow: 0 3px 0 rgba(45, 71, 57, 0.25); cursor: pointer; transition: background-color 0.18s, box-shadow 0.18s, transform 0.18s; }
+button[type="submit"]:hover, .btn-primary:hover, .btn-edit:hover, .btn-search:hover, .btn-text:hover { background: var(--green-dark); transform: translateY(1px); }
+.form-actions { margin-top: 18px; text-align: right; }
+.logout-form button { min-height: 36px; white-space: nowrap; }
 
-/* OKボタンのホバー時に押下感を表現します。 */
-#notificationOkButton:hover {
-  background-color: #7cb55e;
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 var(--color-primary-dark);
+.diary-list-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
+.diary-list-header h2 { color: var(--navy-dark); font-size: 1.35rem; }
+.sort-form, .search-form, .search-controls { display: flex; align-items: center; gap: 10px; }
+.sort-label, .search-label { margin: 0; white-space: nowrap; }
+.sort-select { width: auto; min-width: 140px; }
+.diary-search-bar { margin-bottom: 16px; padding: 12px 14px; background: rgba(255, 255, 255, 0.62); border: 1px dashed #9aaab3; border-radius: 7px; }
+.search-form { justify-content: space-between; }
+.search-controls { justify-content: flex-end; flex: 1; }
+.search-input { max-width: 230px; }
+.btn-search, .btn-reset { min-width: 82px; }
+.btn-reset, .btn-secondary { color: var(--ink); background: #eee8da; border-color: #c9baa0; }
+
+.table-responsive { width: 100%; overflow-x: auto; border: 1px solid #c5d0d6; border-radius: 8px; box-shadow: var(--shadow-small); }
+.diary-table { width: 100%; table-layout: fixed; border-collapse: collapse; background: rgba(255, 255, 255, 0.72); }
+.diary-table th, .diary-table td { padding: 13px 11px; text-align: left; vertical-align: middle; overflow-wrap: anywhere; border-bottom: 1px solid rgba(104, 151, 178, 0.2); }
+.diary-table th { color: var(--white); font-size: 0.88rem; letter-spacing: 0.04em; background: var(--navy); }
+.diary-table tbody tr:nth-child(even) td { background: rgba(236, 245, 248, 0.46); }
+.diary-table tbody tr:hover td { background: rgba(244, 223, 155, 0.26); }
+.diary-table th:nth-child(1), .diary-table td:nth-child(1), .diary-table th:nth-child(2), .diary-table td:nth-child(2) { width: 13%; }
+.diary-table th:nth-child(3), .diary-table td:nth-child(3) { width: 9%; }
+.diary-table th:nth-child(4), .diary-table td:nth-child(4) { width: 20%; }
+.diary-table th:nth-child(5), .diary-table td:nth-child(5) { width: 30%; }
+.diary-table th:nth-child(6), .diary-table td:nth-child(6) { width: 15%; text-align: center; }
+.btn-edit { min-height: 34px; padding: 6px 12px; font-size: 0.86rem; }
+.row-actions { display: flex; justify-content: center; gap: 7px; }
+.btn-delete, .btn-danger { color: var(--white); background: var(--red); border-color: var(--red-dark); }
+.btn-delete { min-height: 34px; padding: 6px 12px; font-size: 0.86rem; }
+.btn-delete:hover, .btn-danger:hover { background: var(--red-dark); transform: translateY(1px); }
+.btn-danger:disabled { cursor: wait; opacity: 0.65; }
+.empty-message { padding: 34px !important; color: var(--ink-soft); text-align: center !important; }
+.pagination { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 20px; }
+.pagination-button { min-width: 86px; }
+.pagination-info { min-width: 70px; color: var(--ink-soft); font-weight: 700; text-align: center; }
+
+.modal, .notification-modal { position: fixed; z-index: 1000; inset: 0; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(24, 34, 43, 0.52); backdrop-filter: blur(3px); }
+.modal-content, .notification-modal-content { width: min(560px, 100%); max-height: 90vh; overflow-y: auto; padding: 28px; background-color: var(--paper); background-image: repeating-linear-gradient(0deg, transparent 0 31px, var(--rule) 31px 32px); border: 1px solid var(--paper-edge); border-radius: 10px; box-shadow: var(--shadow); }
+.modal-content h2 { margin-bottom: 16px; color: var(--navy-dark); }
+.modal-content-small { width: min(430px, 100%); text-align: center; }
+.danger-icon { display: grid; width: 52px; height: 52px; margin: 0 auto 14px; color: var(--red-dark); font-size: 1.6rem; font-weight: 700; background: #f9e4e0; border: 2px solid #dfaaa1; border-radius: 50%; place-items: center; }
+.modal-content-small p { color: var(--ink-soft); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.error-message, .register-error-message { margin-bottom: 14px; color: var(--red); font-weight: 700; white-space: pre-line; }
+.notification-modal-content { text-align: center; }
+.notification-modal-content button { margin-top: 20px; }
+
+.login-page, .register-page { display: grid; min-height: 100vh; place-items: center; }
+.login-page .container, .register-page .register-container, .error-container { width: min(470px, 100%); padding: 34px 32px 34px 76px; }
+.app-title, .app-brand { margin-bottom: 22px; text-align: center; }
+.app-title-main, .app-brand { color: var(--navy-dark); font-size: 1.7rem; font-weight: 700; }
+.app-title-sub { color: var(--ink-soft); font-size: 0.86rem; }
+.login-page h1, .register-page h1, .error-container h1 { margin-bottom: 18px; color: var(--navy-dark); text-align: center; }
+.login-page button[type="submit"], .register-page button[type="submit"] { width: 100%; margin-top: 20px; }
+.login-page a, .register-page a { display: block; margin-top: 22px; text-align: center; }
+.error-container { text-align: center; }
+
+@media (max-width: 800px) {
+  body { padding: 14px 10px 30px; }
+  .site-header { align-items: flex-start; padding: 18px 18px 18px 54px; }
+  body:has(.diary-table) .container { padding: 22px 16px 30px 54px; }
+  .diary-list-header, .search-form { align-items: stretch; flex-direction: column; }
+  .sort-form, .search-controls { width: 100%; }
+  .sort-select, .search-input { width: 100%; max-width: none; }
+  .table-responsive { overflow: visible; border: 0; box-shadow: none; }
+  .diary-table, .diary-table tbody, .diary-table tr, .diary-table td { display: block; width: 100% !important; }
+  .diary-table thead { display: none; }
+  .diary-table tr { margin-bottom: 14px; overflow: hidden; background: rgba(255, 255, 255, 0.84); border: 1px solid #c5d0d6; border-radius: 8px; box-shadow: var(--shadow-small); }
+  .diary-table td { display: grid; grid-template-columns: 92px 1fr; gap: 10px; min-height: 42px; padding: 10px 12px; background: transparent !important; }
+  .diary-table td::before { color: var(--navy); font-size: 0.8rem; font-weight: 700; content: attr(data-label); }
+  .diary-table td:last-child { display: flex; justify-content: flex-end; }
+  .row-actions { width: 100%; }
+  .row-actions button { flex: 1; }
 }
 
-/* 新規登録専用エラーを通知枠として表示します。 */
-.register-error-message {
-  display: block !important;
-  margin: 15px 0 !important;
-  padding: 12px 15px !important;
-  color: var(--color-error) !important;
-  font-size: 0.9rem !important;
-  font-weight: bold !important;
-  line-height: 1.6 !important;
-  background-color: var(--color-error-background) !important;
-  border-left: 5px solid var(--color-error) !important;
-  border-radius: 8px !important;
+@media (max-width: 520px) {
+  .site-header, .search-controls, .modal-actions { align-items: stretch; flex-direction: column; }
+  .site-header .logout-form, .site-header .logout-form button, .btn-search, .btn-reset, .btn-primary, .btn-secondary { width: 100%; }
+  .login-page .container, .register-page .register-container, .error-container { padding: 28px 20px 30px 56px; }
 }
 
-/* 通常のエラーメッセージを通知枠として表示します。 */
-.error-message:not(:empty) {
-  display: block !important;
-  margin: 15px 0 !important;
-  padding: 12px !important;
-  color: var(--color-error) !important;
-  font-size: 0.9rem !important;
-  font-weight: bold !important;
-  background-color: var(--color-error-background) !important;
-  border-left: 5px solid var(--color-error) !important;
-  border-radius: 8px !important;
-}
-
-/* エラーメッセージが空の場合は表示領域を作りません。 */
-.error-message:empty {
-  display: none !important;
-}
-
-/* タブレットでは余白と日記一覧の文字サイズを調整します。 */
-@media (max-width: 768px) {
-  body {
-    padding: 20px;
-  }
-
-  html {
-    font-size: 15px;
-  }
-
-  .site-header {
-    display: block;
-    padding: 24px 20px;
-  }
-
-  .site-header h1 {
-    margin-bottom: 12px;
-  }
-
-  body:has(table) .container {
-    padding: 24px;
-  }
-
-  .search-form,
-  .diary-list-header {
-    display: block;
-  }
-
-  .search-label,
-  .sort-label {
-    display: block;
-    height: auto;
-    line-height: 1.2 !important;
-    transform: none;
-    margin-bottom: 8px !important;
-  }
-
-  .search-controls,
-  .sort-form {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-
-  .search-input {
-    width: 100% !important;
-    min-width: 0;
-  }
-
-  table {
-    font-size: 0.9rem !important;
-  }
-
-  th,
-  td {
-    padding-right: 8px !important;
-    padding-left: 8px !important;
-  }
-}
-
-/* スマートフォンではヘッダーを縦配置に変更します。 */
-@media (max-width: 600px) {
-  body {
-    padding: 12px;
-  }
-
-  html {
-    font-size: 14px;
-  }
-
-  body.login-page,
-  body.register-page {
-    padding: 20px 12px !important;
-  }
-
-  body.login-page .container,
-  body.register-page .register-container {
-    padding: 24px 20px;
-    border-left-width: 6px;
-  }
-
-  .app-brand {
-    margin-bottom: 16px;
-    font-size: 1.55rem;
-  }
-
-  .site-header {
-    display: block;
-    padding: 20px;
-    border-left-width: 6px;
-  }
-
-  .site-header h1 {
-    margin-bottom: 15px;
-    font-size: 1.35rem;
-  }
-
-  .site-header .logout-form {
-    width: 100% !important;
-  }
-
-  .site-header .logout-form button {
-    width: 100% !important;
-    margin-top: 0 !important;
-  }
-
-  body:has(table) .container {
-    padding: 20px;
-    border-left-width: 6px;
-  }
-
-  .diary-form-toggle {
-    padding: 14px 16px !important;
-  }
-
-  /* 検索と並べ替えをスマートフォンの幅に合わせて配置します。 */
-  .diary-list-header {
-    margin-top: 4px;
-    margin-bottom: 10px;
-  }
-
-  .sort-form {
-    width: 100%;
-    min-height: 40px;
-    gap: 8px;
-  }
-
-  .sort-form .sort-select {
-    flex: 1;
-    min-width: 0;
-    width: auto;
-  }
-
-  .diary-search-bar {
-    margin: 10px 0 14px;
-    padding: 10px;
-  }
-
-  .search-form {
-    width: 100%;
-  }
-
-  .search-controls {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .search-input {
-    grid-column: 1 / -1;
-    min-width: 0;
-  }
-
-  .btn-search,
-  .btn-reset {
-    min-width: 0;
-    width: 100% !important;
-    padding-right: 12px !important;
-    padding-left: 12px !important;
-  }
-
-  .diary-write-section form {
-    padding: 18px !important;
-  }
-
-  /* スマートフォンでは横長テーブルを廃止し、1件ごとのカードに変更します。 */
-  .table-responsive,
-  .table-wrapper {
-    overflow: visible !important;
-  }
-
-  table {
-    display: block !important;
-    width: 100% !important;
-    margin-top: 10px !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    background: transparent !important;
-  }
-
-  thead {
-    display: none !important;
-  }
-
-  tbody {
-    display: block !important;
-    width: 100% !important;
-  }
-
-  tbody tr {
-    display: block !important;
-    width: 100% !important;
-    margin-bottom: 16px !important;
-    padding: 14px !important;
-    background-color: var(--color-white) !important;
-    border: 1px solid var(--color-border) !important;
-    border-radius: 14px !important;
-    box-shadow: 0 4px 12px rgba(44, 74, 62, 0.06) !important;
-  }
-
-  tbody tr:hover td {
-    background-color: transparent !important;
-  }
-
-  tbody td {
-    display: grid !important;
-    grid-template-columns: 90px minmax(0, 1fr) !important;
-    width: 100% !important;
-    min-height: auto !important;
-    padding: 8px 0 !important;
-    color: var(--color-text) !important;
-    text-align: left !important;
-    background-color: transparent !important;
-    border: none !important;
-    border-bottom: 1px solid #e5ebe3 !important;
-  }
-
-  /* HTMLのdata-labelを利用して、スマホでも各項目名を表示します。 */
-  tbody td::before {
-    content: attr(data-label);
-    padding-right: 10px;
-    color: var(--color-primary-dark);
-    font-weight: bold;
-  }
-
-  /* 最後の操作欄だけ下線をなくしてカード内をすっきりさせます。 */
-  tbody td:last-child {
-    border-bottom: none !important;
-    text-align: left !important;
-  }
-
-  /* 本文は長文でもカードの横幅からはみ出さないようにします。 */
-  tbody td:nth-child(5) {
-    overflow-wrap: anywhere !important;
-    word-break: break-word !important;
-  }
-
-  /* タイトルをスマートフォンでも強調します。 */
-  tbody td:nth-child(4) {
-    color: var(--color-primary-dark) !important;
-    font-weight: bold !important;
-  }
-
-  /* 編集ボタンはスマートフォンでは押しやすい幅にします。 */
-  tbody td:last-child button {
-    width: 100% !important;
-    max-width: 120px !important;
-    margin: 0 !important;
-  }
-
-  /* 日記が存在しない場合はカード形式を解除して中央表示します。 */
-  tbody tr:has(.empty-message) {
-    padding: 20px !important;
-    text-align: center !important;
-  }
-
-  tbody tr:has(.empty-message) td {
-    display: block !important;
-    border: none !important;
-  }
-
-  tbody tr:has(.empty-message) td::before {
-    display: none !important;
-  }
-
-  .modal-content {
-    width: calc(100% - 24px) !important;
-    margin: 30px auto !important;
-    padding: 24px 20px !important;
-    border-left-width: 6px !important;
-  }
-
-  .modal-content form button {
-    width: calc(50% - 6px) !important;
-    margin-right: 8px !important;
-  }
-
-  .notification-modal {
-    padding: 12px;
-  }
-
-  .notification-modal-content {
-    width: 95%;
-    padding: 30px 20px;
-    border-left-width: 6px;
-  }
-
-  #notificationMessage {
-    font-size: 1rem;
-  }
-}
-
-/* 非常に狭いスマートフォンでは編集ボタンを縦幅も含めて押しやすくします。 */
-@media (max-width: 380px) {
-  body {
-    padding: 8px;
-  }
-
-  body:has(table) .container {
-    padding: 16px;
-  }
-
-  .site-header {
-    padding: 18px;
-  }
-
-  .app-brand {
-    font-size: 1.4rem;
-  }
-
-  tbody tr {
-    padding: 12px !important;
-  }
-
-  tbody td {
-    grid-template-columns: 78px minmax(0, 1fr) !important;
-    font-size: 0.9rem !important;
-  }
-
-  .modal-content form button {
-    display: block !important;
-    width: 100% !important;
-    margin: 12px 0 0 !important;
-  }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
 }

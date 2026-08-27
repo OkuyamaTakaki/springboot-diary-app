@@ -14,14 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * 日記の登録、一覧表示、取得、更新を担当するコントローラー。
+ * 日記の登録、一覧表示、取得、更新、削除を担当するコントローラー。
  */
 @Controller
 public class DiaryController {
@@ -56,6 +58,13 @@ public class DiaryController {
         this.diaryRepository = diaryRepository;
         this.userService = userService;
         this.diaryValidationService = diaryValidationService;
+    }
+
+    /** Renderなどの監視が起動状態を軽量に確認するための応答。 */
+    @GetMapping("/health")
+    @ResponseBody
+    public String health() {
+        return "ok";
     }
 
     /**
@@ -272,6 +281,26 @@ public class DiaryController {
         return ResponseEntity.ok("更新しました");
     }
 
+    /** ログインユーザー本人の日記だけを削除する。 */
+    @DeleteMapping("/api/diary/{id}")
+    public ResponseEntity<String> deleteDiary(
+            @PathVariable final Long id,
+            final Authentication authentication) {
+
+        final String username = authentication.getName();
+        final User user = userService.findByUsername(username);
+        final Diary diary = diaryRepository.findById(id).orElse(null);
+
+        if (diary == null || !diary.getUser().getId().equals(user.getId())) {
+            log.warn("日記の削除を拒否しました。ID: {}, ユーザー: {}", id, username);
+            return ResponseEntity.notFound().build();
+        }
+
+        diaryRepository.delete(diary);
+        log.info("日記を削除しました。ID: {}, ユーザー: {}", id, username);
+        return ResponseEntity.ok("削除しました");
+    }
+
     /**
      * 日記一覧画面に必要なデータをModelへ設定する。
      *
@@ -296,10 +325,14 @@ public class DiaryController {
                 DIARIES_PER_PAGE,
                 Sort.by(direction, SORT_FIELD));
 
+        final boolean searchActive = searchDate != null && !searchDate.isBlank();
         final LocalDate searchLocalDate = parseSearchDate(searchDate);
+        final boolean invalidSearchDate = searchActive && searchLocalDate == null;
         final Page<Diary> diaryPage;
 
-        if (searchLocalDate != null) {
+        if (invalidSearchDate) {
+            diaryPage = Page.empty(pageable);
+        } else if (searchLocalDate != null) {
             final LocalDateTime startOfDay = searchLocalDate.atStartOfDay();
             final LocalDateTime startOfNextDay = searchLocalDate.plusDays(1).atStartOfDay();
             diaryPage = diaryRepository.findByUserAndUpdatedAtBetween(
@@ -317,6 +350,8 @@ public class DiaryController {
         model.addAttribute("username", username);
         model.addAttribute("sort", direction.name().toLowerCase());
         model.addAttribute("searchDate", searchDate);
+        model.addAttribute("searchActive", searchActive);
+        model.addAttribute("invalidSearchDate", invalidSearchDate);
     }
 
     /**

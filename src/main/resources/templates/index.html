@@ -13,7 +13,7 @@
   >
 
   <title>マイページ - 日記アプリ</title>
-  <link rel="stylesheet" th:href="@{/css/diary.css(v=20260827-2)}">
+  <link rel="stylesheet" th:href="@{/css/diary.css(v=20260827-3)}">
 </head>
 
 <body>
@@ -69,6 +69,7 @@
               id="title"
               name="title"
               th:value="${title}"
+              maxlength="100"
               required
             >
           </div>
@@ -80,6 +81,7 @@
               name="content"
               rows="10"
               th:text="${content}"
+              maxlength="2000"
               required
             ></textarea>
           </div>
@@ -233,21 +235,23 @@
                 今日も一日頑張りました。
               </td>
 
-              <td data-label="操作">
-                <button
-                  type="button"
-                  class="btn-edit"
-                  th:attr="data-id=${diary.id}"
-                  onclick="openEditModal(this)"
-                >
-                  編集
-                </button>
+              <td data-label="操作" class="action-cell">
+                <div class="row-actions">
+                  <button type="button" class="btn-edit" th:attr="data-id=${diary.id}" onclick="openEditModal(this)">編集</button>
+                  <button type="button" class="btn-delete" th:attr="data-id=${diary.id},data-title=${diary.title}" onclick="openDeleteModal(this)">削除</button>
+                </div>
               </td>
             </tr>
 
             <!-- 日記が1件も存在しない場合に表示します。 -->
             <tr th:if="${#lists.isEmpty(diaries)}">
-              <td colspan="6" class="empty-message">
+              <td
+                colspan="6"
+                class="empty-message"
+                th:text="${invalidSearchDate}
+                  ? '日付の形式が正しくありません。日付を選び直してください。'
+                  : (${searchActive} ? '指定した日付の日記は見つかりませんでした。' : 'まだ日記が投稿されていません。')"
+              >
                 まだ日記が投稿されていません。
               </td>
             </tr>
@@ -265,7 +269,8 @@
           th:if="${currentPage > 0}"
           th:href="@{/(
             page=${currentPage - 1},
-            sort=${sort}
+            sort=${sort},
+            searchDate=${searchDate}
           )}"
           class="pagination-button"
         >
@@ -282,7 +287,8 @@
           th:if="${currentPage + 1 lt totalPages}"
           th:href="@{/(
             page=${currentPage + 1},
-            sort=${sort}
+            sort=${sort},
+            searchDate=${searchDate}
           )}"
           class="pagination-button"
         >
@@ -324,6 +330,7 @@
             type="text"
             id="editTitle"
             name="title"
+            maxlength="100"
             required
           >
         </div>
@@ -334,6 +341,7 @@
             id="editContent"
             name="content"
             rows="10"
+            maxlength="2000"
             required
           ></textarea>
         </div>
@@ -352,6 +360,19 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- 誤操作を防ぐ削除確認モーダル -->
+  <div id="deleteModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" aria-hidden="true">
+    <div class="modal-content modal-content-small">
+      <div class="danger-icon" aria-hidden="true">!</div>
+      <h2 id="deleteModalTitle">日記を削除しますか？</h2>
+      <p><strong id="deleteDiaryTitle"></strong> は削除後に元へ戻せません。</p>
+      <div class="modal-actions">
+        <button type="button" id="confirmDeleteButton" class="btn-danger">削除する</button>
+        <button type="button" class="btn-secondary" onclick="closeDeleteModal()">キャンセル</button>
+      </div>
     </div>
   </div>
 
