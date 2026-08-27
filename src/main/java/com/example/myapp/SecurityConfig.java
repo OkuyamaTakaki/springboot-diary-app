@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.CrossOriginOpenerPolicyHeaderWriter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 /**
  * アプリケーションの認証・認可およびセキュリティ設定を管理します。
@@ -26,6 +27,9 @@ public class SecurityConfig {
             "object-src 'none'",
             "script-src 'self'",
             "style-src 'self' https://fonts.googleapis.com");
+
+    private static final String PERMISSIONS_POLICY =
+            "camera=(), geolocation=(), microphone=(), payment=()";
 
     /**
      * パスワードをBCryptでハッシュ化します。
@@ -74,8 +78,8 @@ public class SecurityConfig {
                     .policyDirectives(CONTENT_SECURITY_POLICY));
                 headers.referrerPolicy(referrer -> referrer
                     .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER));
-                headers.permissionsPolicy(permissions -> permissions
-                    .policy("camera=(), geolocation=(), microphone=(), payment=()"));
+                headers.addHeaderWriter(
+                    new StaticHeadersWriter("Permissions-Policy", PERMISSIONS_POLICY));
                 headers.crossOriginOpenerPolicy(opener -> opener
                     .policy(CrossOriginOpenerPolicyHeaderWriter.CrossOriginOpenerPolicy.SAME_ORIGIN));
             })
