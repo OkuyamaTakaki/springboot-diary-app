@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アクセス拒否 - ありがとう日記</title>
+  <link rel="stylesheet" th:href="@{/css/diary.css}">
+</head>
+<body>
+  <main class="container error-container">
+    <h1>アクセスできません</h1>
+    <p>このページを表示する権限がありません。</p>
+    <a th:href="@{/login}">ログイン画面へ戻る</a>
+  </main>
+</body>
+</html>
