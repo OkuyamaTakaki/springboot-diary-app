@@ -575,7 +575,8 @@ body.register-page a:hover {
   height: 42px;
   line-height: 1.2 !important;
   vertical-align: middle;
-  transform: translateY(4px);
+  position: relative;
+  top: 4px;
   margin: 0 !important;
   white-space: nowrap;
 }
