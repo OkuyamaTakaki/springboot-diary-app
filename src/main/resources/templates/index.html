@@ -13,7 +13,7 @@
   >
 
   <title>マイページ - 日記アプリ</title>
-  <link rel="stylesheet" th:href="@{/css/diary.css}">
+  <link rel="stylesheet" th:href="@{/css/diary.css(v=20260827-2)}">
 </head>
 
 <body>
@@ -105,7 +105,11 @@
         <h2>日記一覧</h2>
 
         <!-- 選択した並び順をGETリクエストでControllerへ送信します。 -->
-        <form th:action="@{/}" method="get" class="sort-form">
+        <form
+          th:action="@{/(searchDate=${searchDate})}"
+          method="get"
+          class="sort-form"
+        >
           <input
             type="hidden"
             name="searchDate"
