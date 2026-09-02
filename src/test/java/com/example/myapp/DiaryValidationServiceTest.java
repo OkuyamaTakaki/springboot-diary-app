@@ -54,4 +54,33 @@ class DiaryValidationServiceTest {
         assertThat(validationService.containsGratitude("今日は３Ｋ！"))
                 .isTrue();
     }
+
+    @Test
+    void acceptsEnglishGratitudeExpressions() {
+        assertThat(validationService.containsGratitude("Thank you for your kindness."))
+                .isTrue();
+        assertThat(validationService.containsGratitude("A friend helped me today."))
+                .isTrue();
+        assertThat(validationService.containsGratitude("I’m grateful for the quiet morning."))
+                .isTrue();
+    }
+
+    @Test
+    void rejectsNegatedEnglishGratitudeExpressions() {
+        assertThat(validationService.containsGratitude("I am not grateful for that."))
+                .isFalse();
+        assertThat(validationService.containsGratitude("I do not appreciate this."))
+                .isFalse();
+        assertThat(validationService.containsGratitude("Nobody helped me today."))
+                .isFalse();
+    }
+
+    @Test
+    void rejectsEnglishKeywordsEmbeddedInOtherWords() {
+        assertThat(validationService.containsGratitude(
+                "I felt ungrateful during Thanksgiving."))
+                .isFalse();
+        assertThat(validationService.containsGratitude("The task remained unhelped."))
+                .isFalse();
+    }
 }

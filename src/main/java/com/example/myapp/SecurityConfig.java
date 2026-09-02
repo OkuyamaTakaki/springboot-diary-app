@@ -20,13 +20,13 @@ public class SecurityConfig {
             "default-src 'self'",
             "base-uri 'self'",
             "connect-src 'self'",
-            "font-src 'self' https://fonts.gstatic.com",
+            "font-src 'self'",
             "form-action 'self'",
             "frame-ancestors 'none'",
             "img-src 'self' data:",
             "object-src 'none'",
             "script-src 'self'",
-            "style-src 'self' https://fonts.googleapis.com");
+            "style-src 'self'");
 
     private static final String PERMISSIONS_POLICY =
             "camera=(), geolocation=(), microphone=(), payment=()";
@@ -59,10 +59,13 @@ public class SecurityConfig {
                     "/h2-console/**"
                 ).denyAll()
                 .requestMatchers(
+                    "/login",
+                    "/privacy",
                     "/register",
                     "/health",
                     "/error",
                     "/css/**",
+                    "/fonts/**",
                     "/js/**"
                 ).permitAll()
                 .anyRequest().authenticated()

@@ -41,6 +41,7 @@ public class DiaryController {
     private final DiaryRepository diaryRepository;
     private final UserService userService;
     private final DiaryValidationService diaryValidationService;
+    private final LocalizedMessages messages;
 
     /**
      * 必要なコンポーネントをコンストラクタから注入する。
@@ -48,15 +49,18 @@ public class DiaryController {
      * @param diaryRepository 日記データを操作するリポジトリ
      * @param userService ユーザー情報を取得するサービス
      * @param diaryValidationService 日記内容を検証するサービス
+     * @param messages 利用者の選択言語に対応するメッセージ
      */
     public DiaryController(
             final DiaryRepository diaryRepository,
             final UserService userService,
-            final DiaryValidationService diaryValidationService) {
+            final DiaryValidationService diaryValidationService,
+            final LocalizedMessages messages) {
 
         this.diaryRepository = diaryRepository;
         this.userService = userService;
         this.diaryValidationService = diaryValidationService;
+        this.messages = messages;
     }
 
     /** Renderなどの監視が起動状態を軽量に確認するための応答。 */
@@ -97,9 +101,7 @@ public class DiaryController {
 
             model.addAttribute(
                     "errorMessage",
-                    "入力できる文字数を超えています。\n\n"
-                            + "タイトル：100文字以内\n"
-                            + "本文：2000文字以内");
+                    messages.get("diary.error.length"));
 
             model.addAttribute("title", title);
             model.addAttribute("content", content);
@@ -115,13 +117,7 @@ public class DiaryController {
 
             model.addAttribute(
                     "errorMessage",
-                    "日記には感謝の気持ちを含めてください。\n\n"
-                            + "「ありがとう」\n"
-                            + "「感謝」\n"
-                            + "「ありがたい」\n"
-                            + "「お礼」\n"
-                            + "「助かった」\n\n"
-                            + "のいずれかを含めて書き直してください。");
+                    messages.get("diary.error.gratitude"));
 
             model.addAttribute("title", title);
             model.addAttribute("content", content);
@@ -136,7 +132,7 @@ public class DiaryController {
 
         redirectAttributes.addFlashAttribute(
                 "successMessage",
-                "日記「" + title + "」を登録しました。");
+                messages.get("diary.success.created", title));
 
         log.info("日記の新規登録が完了しました。ユーザー: {}", username);
 
@@ -250,22 +246,14 @@ public class DiaryController {
                     username);
 
             return ResponseEntity.badRequest().body(
-                    "入力できる文字数を超えています。\n\n"
-                            + "タイトル：100文字以内\n"
-                            + "本文：2000文字以内");
+                    messages.get("diary.error.length"));
         }
 
         // 新規登録時と同じ感謝・ポジティブ表現のチェックを行う。
         if (!diaryValidationService.containsGratitude(content)) {
 
             return ResponseEntity.badRequest().body(
-                    "日記には感謝の気持ちを含めてください。\n\n"
-                            + "「ありがとう」\n"
-                            + "「感謝」\n"
-                            + "「ありがたい」\n"
-                            + "「お礼」\n"
-                            + "「助かった」\n\n"
-                            + "のいずれかを含めて書き直してください。");
+                    messages.get("diary.error.gratitude"));
         }
 
         diary.setTitle(title);
@@ -277,7 +265,7 @@ public class DiaryController {
                 id,
                 username);
 
-        return ResponseEntity.ok("更新しました");
+        return ResponseEntity.ok(messages.get("diary.success.updated", title));
     }
 
     /**

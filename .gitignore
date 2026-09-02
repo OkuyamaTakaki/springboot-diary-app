@@ -43,3 +43,18 @@ BOOT-INF/
 work-maven/
 work-maven.zip
 work/
+
+# 秘密情報・署名・ローカルログ
+.env
+.env.*
+!.env.example
+*.log
+*.key
+*.pem
+*.p12
+*.jks
+
+# OS固有ファイル
+.DS_Store
+Thumbs.db
+Desktop.ini

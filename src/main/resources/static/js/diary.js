@@ -4,6 +4,33 @@
  */
 
 /**
+ * サーバー側で翻訳済みの画面文言を取得します。
+ * 設定要素がない認証画面でも安全に動作するよう、既定文言を受け取ります。
+ *
+ * @param {string} key data属性に対応するキー
+ * @param {string} fallback 設定がない場合の文言
+ * @returns {string} 表示用文言
+ */
+function getLocalizedMessage(key, fallback) {
+    const messages = document.getElementById("localizedMessages");
+    return messages?.dataset[key] || fallback;
+}
+
+let notificationReturnFocus = null;
+
+/**
+ * 言語切替後も検索日、並び順、ページ番号など現在の表示条件を維持します。
+ * JavaScriptが無効な場合も、HTMLの相対リンクで言語切替自体は利用できます。
+ */
+function preserveViewStateInLanguageLinks() {
+    document.querySelectorAll(".language-switch a[data-language]").forEach(function (link) {
+        const targetUrl = new URL(window.location.href);
+        targetUrl.searchParams.set("lang", link.dataset.language);
+        link.href = `${targetUrl.pathname}${targetUrl.search}${targetUrl.hash}`;
+    });
+}
+
+/**
  * 共通通知モーダルを表示します。
  *
  * @param {string} message 表示するメッセージ
@@ -19,9 +46,13 @@ function showNotification(message, type = "reload") {
         return;
     }
 
+    notificationReturnFocus = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     messageElement.textContent = message;
     modal.style.display = "flex";
     modal.setAttribute("aria-hidden", "false");
+    okButton.focus();
 
     okButton.onclick = function () {
         modal.style.display = "none";
@@ -38,6 +69,8 @@ function showNotification(message, type = "reload") {
         }
 
         if (type === "stay") {
+            notificationReturnFocus?.focus();
+            notificationReturnFocus = null;
             return;
         }
 
@@ -49,6 +82,24 @@ function showNotification(message, type = "reload") {
  * 日記入力フォームを開閉し、ボタンの表示を切り替えます。
  */
 function toggleDiaryForm() {
+    const form = document.getElementById("diaryWriteForm");
+
+    if (!form) {
+        console.error("日記入力フォームのHTML要素が見つかりません。");
+        return;
+    }
+
+    const isOpen = form.style.display === "block";
+
+    setDiaryFormOpen(!isOpen);
+}
+
+/**
+ * 日記入力フォームの表示状態とアクセシビリティ属性を同期します。
+ *
+ * @param {boolean} isOpen フォームを開く場合はtrue
+ */
+function setDiaryFormOpen(isOpen) {
     const toggle = document.getElementById("diaryFormToggle");
     const form = document.getElementById("diaryWriteForm");
     const text = document.getElementById("diaryFormToggleText");
@@ -59,19 +110,18 @@ function toggleDiaryForm() {
         return;
     }
 
-    const isOpen = form.style.display === "block";
-
     if (isOpen) {
-        form.style.display = "none";
-        toggle?.setAttribute("aria-expanded", "false");
-        text.textContent = "日記を書く";
-        icon.textContent = "▼";
-    } else {
         form.style.display = "block";
         toggle?.setAttribute("aria-expanded", "true");
-        text.textContent = "日記を閉じる";
+        text.textContent = getLocalizedMessage("closeWriter", "日記を閉じる");
         icon.textContent = "▲";
+        return;
     }
+
+    form.style.display = "none";
+    toggle?.setAttribute("aria-expanded", "false");
+    text.textContent = getLocalizedMessage("write", "日記を書く");
+    icon.textContent = "▼";
 }
 
 /**
@@ -81,6 +131,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const diaryFormToggle = document.getElementById("diaryFormToggle");
     const sortSelect = document.getElementById("sort");
     const editCancelButton = document.getElementById("editCancelButton");
+
+    preserveViewStateInLanguageLinks();
 
     diaryFormToggle?.addEventListener("click", toggleDiaryForm);
     sortSelect?.addEventListener("change", function () {
@@ -116,6 +168,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (diaryErrorMessage) {
+        setDiaryFormOpen(true);
+        document.getElementById("content")?.focus();
         showNotification(diaryErrorMessage.textContent.trim(), "stay");
         return;
     }
@@ -147,7 +201,10 @@ async function openEditModal(button) {
         const response = await fetch(`/api/diary/${id}`);
 
         if (!response.ok) {
-            showNotification("日記を取得できませんでした。", "stay");
+            showNotification(
+                getLocalizedMessage("fetchError", "日記を取得できませんでした。"),
+                "stay"
+            );
             return;
         }
 
@@ -163,9 +220,14 @@ async function openEditModal(button) {
 
         modal.style.display = "flex";
         modal.setAttribute("aria-hidden", "false");
+        modal.dataset.triggerId = id;
+        titleInput.focus();
     } catch (error) {
         console.error("日記の取得中にエラーが発生しました。", error);
-        showNotification("日記の取得中にエラーが発生しました。", "stay");
+        showNotification(
+            getLocalizedMessage("fetchUnexpected", "日記の取得中にエラーが発生しました。"),
+            "stay"
+        );
     }
 }
 
@@ -188,7 +250,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const csrfInput = document.getElementById("csrfToken");
 
         if (!csrfInput) {
-            showNotification("セキュリティ情報を取得できませんでした。", "stay");
+            showNotification(
+                getLocalizedMessage("csrfError", "セキュリティ情報を取得できませんでした。"),
+                "stay"
+            );
             return;
         }
 
@@ -212,11 +277,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            const message = await response.text();
             closeEditModal();
-            showNotification(`日記「${title}」を更新しました。`, "reload");
+            showNotification(message, "reload");
         } catch (error) {
             console.error("日記の更新中にエラーが発生しました。", error);
-            showNotification("日記の更新中にエラーが発生しました。", "stay");
+            showNotification(
+                getLocalizedMessage("updateUnexpected", "日記の更新中にエラーが発生しました。"),
+                "stay"
+            );
         }
     });
 });
@@ -233,6 +302,12 @@ function closeEditModal() {
 
     modal.style.display = "none";
     modal.setAttribute("aria-hidden", "true");
+
+    const trigger = document.querySelector(
+        `.btn-edit[data-id="${CSS.escape(modal.dataset.triggerId || "")}"]`
+    );
+    trigger?.focus();
+    delete modal.dataset.triggerId;
 }
 
 document.addEventListener("keydown", function (event) {

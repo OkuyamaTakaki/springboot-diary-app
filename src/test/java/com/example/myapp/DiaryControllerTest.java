@@ -12,10 +12,13 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -37,10 +40,15 @@ class DiaryControllerTest {
         diaryRepository = mock(DiaryRepository.class);
         userService = mock(UserService.class);
         authentication = mock(Authentication.class);
+        LocaleContextHolder.setLocale(Locale.JAPANESE);
+        final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename("messages");
+        messageSource.setDefaultEncoding("UTF-8");
         controller = new DiaryController(
                 diaryRepository,
                 userService,
-                new DiaryValidationService(new InputValidationService()));
+                new DiaryValidationService(new InputValidationService()),
+                new LocalizedMessages(messageSource));
 
         user = new User("alice", "encodedPassword");
         setId(user, 1L);
@@ -76,8 +84,10 @@ class DiaryControllerTest {
 
     @Test
     void pageLargerThanLastPageFallsBackToLastPage() {
-        final Page<Diary> overflowPage = mock(Page.class);
-        when(overflowPage.getTotalPages()).thenReturn(3);
+        final Page<Diary> overflowPage = new PageImpl<>(
+                List.of(),
+                PageRequest.of(999_999, 7),
+                21);
 
         final Diary diary = diary("最後の日記", "ありがとう", user);
         final Page<Diary> lastPage = new PageImpl<>(
@@ -85,7 +95,8 @@ class DiaryControllerTest {
                 PageRequest.of(2, 7),
                 21);
         when(diaryRepository.findByUser(eq(user), any(Pageable.class)))
-                .thenReturn(overflowPage, lastPage);
+                .thenReturn(overflowPage)
+                .thenReturn(lastPage);
 
         final ConcurrentModel model = new ConcurrentModel();
         controller.index(999_999, "desc", null, model, authentication);
@@ -102,12 +113,14 @@ class DiaryControllerTest {
         setId(diary, 10L);
         when(diaryRepository.findById(10L)).thenReturn(Optional.of(diary));
 
-        assertThat(controller.updateDiary(
+        final var response = controller.updateDiary(
                 10L,
                 "更新後",
                 "今日もありがとうございます。",
-                authentication).getStatusCode())
+                authentication);
+        assertThat(response.getStatusCode())
                 .isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).contains("更新後");
         assertThat(diary.getTitle()).isEqualTo("更新後");
         assertThat(diary.getContent()).isEqualTo("今日もありがとうございます。");
         verify(diaryRepository).save(diary);

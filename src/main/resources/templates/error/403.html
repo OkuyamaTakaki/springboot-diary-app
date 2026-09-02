@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>アクセス拒否 - ありがとう日記</title>
-  <link rel="stylesheet" th:href="@{/css/diary.css(v=20260827-6)}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title th:text="#{error.forbidden.title}">アクセス拒否 - ありがとう日記</title>
+  <link rel="stylesheet" th:href="@{/css/diary.css(v=20260901-4)}">
 </head>
 <body>
   <main class="container error-container">
-    <h1>アクセスできません</h1>
-    <p>このページを表示する権限がありません。</p>
-    <a th:href="@{/login}">ログイン画面へ戻る</a>
+    <div th:replace="~{fragments/language :: switcher}"></div>
+    <h1 th:text="#{error.forbidden.heading}">アクセスできません</h1>
+    <p th:text="#{error.forbidden.message}">このページを表示する権限がありません。</p>
+    <a th:href="@{/login}" th:text="#{common.backToLogin}">ログイン画面へ戻る</a>
   </main>
 </body>
 </html>

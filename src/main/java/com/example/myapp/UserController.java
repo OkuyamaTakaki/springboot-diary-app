@@ -32,6 +32,7 @@ public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final InputValidationService inputValidationService;
+    private final LocalizedMessages messages;
 
     /**
      * 必要なコンポーネントをコンストラクタから注入します。
@@ -39,14 +40,17 @@ public class UserController {
      * @param userService ユーザー情報を操作するサービス
      * @param passwordEncoder パスワードを暗号化するエンコーダー
      * @param inputValidationService 共通入力バリデーションサービス
+     * @param messages 利用者の選択言語に対応するメッセージ
      */
     public UserController(
             final UserService userService,
             final PasswordEncoder passwordEncoder,
-            final InputValidationService inputValidationService) {
+            final InputValidationService inputValidationService,
+            final LocalizedMessages messages) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.inputValidationService = inputValidationService;
+        this.messages = messages;
     }
 
     /**
@@ -96,7 +100,7 @@ public class UserController {
             log.warn("登録エラー：ユーザー名またはパスワードが未入力です。");
             model.addAttribute(
                     "registerErrorMessage",
-                    "ユーザー名とパスワードは必ず入力してください。");
+                    messages.get("register.error.required"));
             model.addAttribute("username", username);
             return "register";
         }
@@ -112,8 +116,7 @@ public class UserController {
 
             model.addAttribute(
                     "registerErrorMessage",
-                    "ユーザー名は3〜50文字で入力してください。\n"
-                            + "使用できる文字は、文字・数字・ピリオド・ハイフン・アンダーバーです。");
+                    messages.get("register.error.username"));
             model.addAttribute("username", normalizedUsername);
             return "register";
         }
@@ -126,8 +129,7 @@ public class UserController {
             log.warn("登録エラー：パスワードが利用条件を満たしていません。");
             model.addAttribute(
                     "registerErrorMessage",
-                    "パスワードは8文字以上で入力してください。\n"
-                            + "安全な暗号化の上限は半角72文字相当です。");
+                    messages.get("register.error.password"));
             model.addAttribute("username", normalizedUsername);
             return "register";
         }
@@ -139,8 +141,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("username", normalizedUsername);
             redirectAttributes.addFlashAttribute(
                     "registerErrorMessage",
-                    "そのユーザー名は既に登録されています。\n"
-                            + "別のユーザー名をご利用ください。");
+                    messages.get("register.error.duplicate"));
 
             return "redirect:/register";
         }
@@ -156,8 +157,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("username", normalizedUsername);
             redirectAttributes.addFlashAttribute(
                     "registerErrorMessage",
-                    "そのユーザー名は既に登録されています。\n"
-                            + "別のユーザー名をご利用ください。");
+                    messages.get("register.error.duplicate"));
             return "redirect:/register";
         }
 
@@ -165,7 +165,7 @@ public class UserController {
 
         redirectAttributes.addFlashAttribute(
                 "successMessage",
-                "ユーザー名「" + normalizedUsername + "」を登録しました。");
+                messages.get("register.success", normalizedUsername));
 
         return "redirect:/login";
     }

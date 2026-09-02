@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<body>
+  <!-- 現在のページのまま表示言語を切り替え、選択はCookieへ保存します。 -->
+  <nav th:fragment="switcher"
+       class="language-switch"
+       th:attr="aria-label=#{language.label}">
+    <a href="?lang=ja"
+       data-language="ja"
+       lang="ja"
+       th:attr="aria-current=${#locale.language == 'ja'} ? 'page' : null"
+       th:text="#{language.japanese}">日本語</a>
+    <span aria-hidden="true">/</span>
+    <a href="?lang=en"
+       data-language="en"
+       lang="en"
+       th:attr="aria-current=${#locale.language == 'en'} ? 'page' : null"
+       th:text="#{language.english}">English</a>
+  </nav>
+</body>
+</html>

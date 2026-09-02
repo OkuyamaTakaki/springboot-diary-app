@@ -10,9 +10,13 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
+
+import java.util.Locale;
 
 class UserControllerTest {
 
@@ -24,10 +28,15 @@ class UserControllerTest {
     void setUp() {
         userService = mock(UserService.class);
         passwordEncoder = mock(PasswordEncoder.class);
+        LocaleContextHolder.setLocale(Locale.JAPANESE);
+        final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename("messages");
+        messageSource.setDefaultEncoding("UTF-8");
         controller = new UserController(
                 userService,
                 passwordEncoder,
-                new InputValidationService());
+                new InputValidationService(),
+                new LocalizedMessages(messageSource));
     }
 
     @Test

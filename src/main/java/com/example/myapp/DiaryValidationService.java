@@ -26,6 +26,22 @@ public class DiaryValidationService {
                     + "感じ(?:ない|ていない|ません)|言わ(?:ない|ず)|伝え(?:ない|ていない|ません)|"
                     + "要らない|不要|なし|無い|ない|ありません|否定)");
 
+    private static final Pattern ENGLISH_NEGATION_BEFORE_KEYWORD = Pattern.compile(
+            "(?:\\b(?:not|never|without|nobody)\\s+|"
+                    + "\\b(?:no[ -]?one)\\s+|"
+                    + "\\b(?:do|does|did|am|is|are|was|were|can|could|would|should|will)"
+                    + "\\s+not\\s+|"
+                    + "\\b(?:don't|doesn't|didn't|isn't|aren't|wasn't|weren't|can't|"
+                    + "couldn't|wouldn't|shouldn't|won't)\\s+)"
+                    + "[^.!?\\n]{0,16}$");
+
+    /**
+     * 英語の候補語だけに単語境界を適用するための判定。
+     * 日本語には活用や後続語があるため、同じ境界規則を強制しない。
+     */
+    private static final Pattern ENGLISH_KEYWORD = Pattern.compile(
+            "[a-z]+(?: [a-z]+)*");
+
     /**
      * 日記本文に含まれていることを許可する感謝・ポジティブ表現。
      */
@@ -42,7 +58,9 @@ public class DiaryValidationService {
             "ほっとした", "ホッとした", "安心", "安らぎ", "やすらぎ",
             "癒やされた", "癒された", "癒し", "温かい", "あたたかい", "優しい", "やさしい",
             "褒められた", "ほめられた", "認められた", "評価された", "賞賛",
-            "お褒めの言葉", "応援してもらった", "励まされた");
+            "お褒めの言葉", "応援してもらった", "励まされた",
+            "thank you", "thanks", "thankful", "grateful", "gratitude",
+            "appreciate", "appreciated", "helped", "kindness", "fortunate");
 
     private final InputValidationService inputValidationService;
 
@@ -88,6 +106,7 @@ public class DiaryValidationService {
         }
 
         final String normalized = Normalizer.normalize(content, Normalizer.Form.NFKC)
+                .replace('’', '\'')
                 .toLowerCase(Locale.ROOT);
         final boolean hasGratitude = GRATITUDE_KEYWORDS.stream()
                 .map(keyword -> Normalizer.normalize(keyword, Normalizer.Form.NFKC)
@@ -114,15 +133,44 @@ public class DiaryValidationService {
                 return false;
             }
 
-            final int contextStart = keywordIndex + keyword.length();
+            final int nextFromIndex = keywordIndex + keyword.length();
+            if (ENGLISH_KEYWORD.matcher(keyword).matches()
+                    && !hasEnglishWordBoundaries(content, keywordIndex, nextFromIndex)) {
+                fromIndex = nextFromIndex;
+                continue;
+            }
+
+            final int contextStart = nextFromIndex;
             final int contextEnd = Math.min(content.length(), contextStart + 24);
             final String followingContext = content.substring(contextStart, contextEnd);
-            if (!NEGATION_AFTER_KEYWORD.matcher(followingContext).find()) {
+            final int precedingStart = Math.max(0, keywordIndex - 32);
+            final String precedingContext = content.substring(precedingStart, keywordIndex);
+            if (!NEGATION_AFTER_KEYWORD.matcher(followingContext).find()
+                    && !ENGLISH_NEGATION_BEFORE_KEYWORD.matcher(precedingContext).find()) {
                 return true;
             }
 
-            fromIndex = keywordIndex + keyword.length();
+            fromIndex = nextFromIndex;
         }
         return false;
+    }
+
+    /**
+     * 英語キーワードが別の単語の一部ではなく、独立した語または句か確認する。
+     */
+    private boolean hasEnglishWordBoundaries(
+            final String content,
+            final int keywordStart,
+            final int keywordEnd) {
+
+        final boolean startsInsideWord = keywordStart > 0
+                && isWordCharacter(content.charAt(keywordStart - 1));
+        final boolean endsInsideWord = keywordEnd < content.length()
+                && isWordCharacter(content.charAt(keywordEnd));
+        return !startsInsideWord && !endsInsideWord;
+    }
+
+    private boolean isWordCharacter(final char value) {
+        return Character.isLetterOrDigit(value) || value == '_';
     }
 }
