@@ -12,7 +12,7 @@ class ProductionStartupConfigurationTest {
 
     @Test
     void productionAvoidsUnusedDatabaseConnectionsAndKeepsSecurityDefaults() throws Exception {
-        final Properties properties = loadProductionProperties();
+        final Properties properties = loadProperties("application-prod.properties");
 
         assertThat(properties)
                 .containsEntry("spring.datasource.hikari.minimum-idle", "0")
@@ -21,11 +21,19 @@ class ProductionStartupConfigurationTest {
                 .containsEntry("server.servlet.session.cookie.secure", "true");
     }
 
-    private Properties loadProductionProperties() throws Exception {
+    @Test
+    void messagesDoNotFallBackToTheServerOperatingSystemLocale() throws Exception {
+        final Properties properties = loadProperties("application.properties");
+
+        assertThat(properties)
+                .containsEntry("spring.messages.fallback-to-system-locale", "false");
+    }
+
+    private Properties loadProperties(final String resourceName) throws Exception {
         final Properties properties = new Properties();
         try (var stream = getClass().getClassLoader()
-                .getResourceAsStream("application-prod.properties")) {
-            assertThat(stream).as("application-prod.properties").isNotNull();
+                .getResourceAsStream(resourceName)) {
+            assertThat(stream).as(resourceName).isNotNull();
             properties.load(new InputStreamReader(stream, StandardCharsets.UTF_8));
         }
         return properties;

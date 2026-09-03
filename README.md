@@ -6,7 +6,7 @@ Codex担当の役割、触る範囲、統括への引渡し条件は [`AGENTS.md
 
 ## 現在の公開状態
 
-現状は**ローカル公開候補**であり、製品完成・本番公開の承認済み状態ではありません。既存の31件の自動テスト、日英表示、主要な画面幅、入力失敗からの復帰、認証と所有者境界は確認済みです。一方、次の共通完成基準が未確認または不適合のため、公開判断は「停止」です。
+現状は**ローカル公開候補**であり、製品完成・本番公開の承認済み状態ではありません。既存の32件の自動テスト、日英表示、主要な画面幅、入力失敗からの復帰、認証と所有者境界は確認済みです。一方、次の共通完成基準が未確認または不適合のため、公開判断は「停止」です。
 
 - 80台の物理端末: Androidスマートフォン20台、iPhone 20台、AndroidタブレットまたはiPad 20台、Windows PC 20台
 - 実Safari、Android WebView、物理タッチと実機キーボード
@@ -50,11 +50,11 @@ pom.xml              Java依存関係とビルド設定
 - `data/`: ローカルH2 DB。`application.properties`の既定接続先から参照される。DB内容は検査・報告しない。
 - `work/`: GitHub接続用ファイル、known-hosts、DPAPIファイル、Cookie設定、自動投稿用ローカルスクリプトを含む。秘密値や資格情報は検査・報告しない。
 - `.git/config`: `work/`内のSSH鍵とknown-hostsを参照するローカル設定。
-- Render／Neon: 接続情報は環境変数で受け取る設計だが、実際の地域、プラン、費用、保存期間、復旧条件は未確認。
+- Render／Neon: Render Free／SingaporeとNeon Free／AWS US West 2、Postgres 18、復元履歴6時間を管理画面で確認済み。接続情報は環境変数で受け取り、値は資料やGitへ記録しない。
 
-分離先候補は`%LOCALAPPDATA%\OkuyamaTakaki\ArigatouDiary`です。現在は計画記録までで、コピーや参照切替は未実施です。復元可能な段階手順は [`Docs/LOCAL_DATA_SEPARATION.md`](Docs/LOCAL_DATA_SEPARATION.md) を参照してください。移動、ACL変更、参照先変更は保護操作として、正確な対象と復旧手順を提示して人の確認を得てから行います。2026年9月3日の読取り専用確認でローカルH2の`USERS`と`DIARIES`は各0件でした。読取り前後でDBハッシュは不変です。本番Neonは未確認で、本日分の日記も外部投稿していません。
+分離先候補は`%LOCALAPPDATA%\OkuyamaTakaki\ArigatouDiary`です。現在は計画記録までで、コピーや参照切替は未実施です。復元可能な段階手順は [`Docs/LOCAL_DATA_SEPARATION.md`](Docs/LOCAL_DATA_SEPARATION.md) を参照してください。移動、ACL変更、参照先変更は保護操作として、正確な対象と復旧手順を提示して人の確認を得てから行います。2026年9月3日の読取り専用確認でローカルH2の`USERS`と`DIARIES`は各0件、読取り前後のDBハッシュは不変でした。本番Neonは`users` 3件、`diaries` 24件で、削除前の手動スナップショット1件を作成済みです。本日分の日記はまだ外部投稿していません。
 
-自動投稿の確定条件、未確定条件、安全な停止・再開境界は[`Docs/AUTOMATIC_POSTING_PLAN.md`](Docs/AUTOMATIC_POSTING_PLAN.md)に集約しています。23件の本文と9月3日だけの時間帯外例外は採用済みで、96項目のローカル日次ポリシー試験が合格しました。外部投稿と本番Neon削除は、正確な対象・件数・復旧点を示す直前確認まで無効です。
+自動投稿の確定条件、安全な停止・再開境界は[`Docs/AUTOMATIC_POSTING_PLAN.md`](Docs/AUTOMATIC_POSTING_PLAN.md)に集約しています。23件の本文と9月3日だけの時間帯外例外は採用済みで、96項目のローカル日次ポリシー試験が合格しました。本番Neon削除、同名アカウント再作成、当日1件の投稿は利用者承認済みですが、新しいRender版の成功と操作確認が済むまでは実行しません。
 
 ## 久しぶりに作業を再開するとき
 
@@ -95,7 +95,7 @@ Java 21を用意し、プロジェクト直下で次を実行します。
 
 RenderのDockerビルドでも同じテストを必ず実行します。GitHubでは通常テスト、CodeQL、Dependabotを継続実行します。
 
-2026-09-03にJava 21.0.12とMaven Wrapperで名称変更後を1スレッド検証し、`verify`、31件のテスト、実行JAR生成がすべて成功しました。失敗・エラー・スキップは0件です。詳しい実績と再実行方法は [`Docs/VERIFICATION_2026-09-01.md`](Docs/VERIFICATION_2026-09-01.md) を参照してください。
+2026-09-03にJava 21.0.12とMaven Wrapperで名称変更後を1スレッド検証し、`verify`、32件のテスト、実行JAR生成がすべて成功しました。Renderの英語OSで見つかった言語フォールバックも修正し、英語ロケール・UTC相当で全32件を再確認しています。失敗・エラー・スキップは0件です。詳しい実績と再実行方法は [`Docs/VERIFICATION_2026-09-01.md`](Docs/VERIFICATION_2026-09-01.md) と [`Docs/INCIDENTS.md`](Docs/INCIDENTS.md) を参照してください。
 
 ## 対応画面と操作性
 

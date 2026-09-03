@@ -32,6 +32,7 @@ class UserControllerTest {
         final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setFallbackToSystemLocale(false);
         controller = new UserController(
                 userService,
                 passwordEncoder,
