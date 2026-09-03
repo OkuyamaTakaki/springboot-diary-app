@@ -1,4 +1,4 @@
-# ありがとう日記
+# 奥山貴希のありがとう日記 / Takaki Okuyama’s Gratitude Diary
 
 感謝を記録する、Spring Boot製の日記アプリです。利用者ごとにデータを分離し、自分の日記だけを登録・閲覧・編集できます。製品方針として削除機能は設けていません。
 
@@ -52,9 +52,9 @@ pom.xml              Java依存関係とビルド設定
 - `.git/config`: `work/`内のSSH鍵とknown-hostsを参照するローカル設定。
 - Render／Neon: 接続情報は環境変数で受け取る設計だが、実際の地域、プラン、費用、保存期間、復旧条件は未確認。
 
-分離先候補は`%LOCALAPPDATA%\OkuyamaTakaki\ArigatouDiary`です。現在は計画記録までで、コピーや参照切替は未実施です。復元可能な段階手順は [`Docs/LOCAL_DATA_SEPARATION.md`](Docs/LOCAL_DATA_SEPARATION.md) を参照してください。移動、ACL変更、参照先変更は保護操作として、正確な対象と復旧手順を提示して人の確認を得てから行います。本日分の日記はこの検査では投稿していません。既存DBと本番DBを読んでいないため既存投稿の有無は未確認で、自動投稿も未承認です。
+分離先候補は`%LOCALAPPDATA%\OkuyamaTakaki\ArigatouDiary`です。現在は計画記録までで、コピーや参照切替は未実施です。復元可能な段階手順は [`Docs/LOCAL_DATA_SEPARATION.md`](Docs/LOCAL_DATA_SEPARATION.md) を参照してください。移動、ACL変更、参照先変更は保護操作として、正確な対象と復旧手順を提示して人の確認を得てから行います。2026年9月3日の読取り専用確認でローカルH2の`USERS`と`DIARIES`は各0件でした。読取り前後でDBハッシュは不変です。本番Neonは未確認で、本日分の日記も外部投稿していません。
 
-自動投稿の確定条件、未確定条件、安全な停止・再開境界は[`Docs/AUTOMATIC_POSTING_PLAN.md`](Docs/AUTOMATIC_POSTING_PLAN.md)に集約しています。期間と時間帯が決まっていても、本文、対象アカウント、削除対象が確定するまでは外部投稿や既存データ削除を行いません。
+自動投稿の確定条件、未確定条件、安全な停止・再開境界は[`Docs/AUTOMATIC_POSTING_PLAN.md`](Docs/AUTOMATIC_POSTING_PLAN.md)に集約しています。23件の本文と9月3日だけの時間帯外例外は採用済みで、96項目のローカル日次ポリシー試験が合格しました。外部投稿と本番Neon削除は、正確な対象・件数・復旧点を示す直前確認まで無効です。
 
 ## 久しぶりに作業を再開するとき
 
@@ -95,7 +95,7 @@ Java 21を用意し、プロジェクト直下で次を実行します。
 
 RenderのDockerビルドでも同じテストを必ず実行します。GitHubでは通常テスト、CodeQL、Dependabotを継続実行します。
 
-2026-09-02にJava 21.0.12とMaven Wrapperで最新版をオフライン・1スレッド検証し、`verify`、31件のテスト、実行JAR生成がすべて成功しました。失敗・エラー・スキップは0件です。詳しい実績と再実行方法は [`Docs/VERIFICATION_2026-09-01.md`](Docs/VERIFICATION_2026-09-01.md) を参照してください。
+2026-09-03にJava 21.0.12とMaven Wrapperで名称変更後を1スレッド検証し、`verify`、31件のテスト、実行JAR生成がすべて成功しました。失敗・エラー・スキップは0件です。詳しい実績と再実行方法は [`Docs/VERIFICATION_2026-09-01.md`](Docs/VERIFICATION_2026-09-01.md) を参照してください。
 
 ## 対応画面と操作性
 
@@ -126,9 +126,11 @@ Render再起動後もデータが残るよう、無料のNeon PostgreSQLを使�
 
 本番では未使用のDB接続を起動時に増やさず、必要になった分だけ接続します。Renderの休止復帰、JVM、DB接続、Spring Boot初期化をログから区別する方法は [`Docs/STARTUP_DIAGNOSTICS.md`](Docs/STARTUP_DIAGNOSTICS.md) を参照してください。
 
-無料環境が休止していると、最初のアクセスでRenderの `Application loading` が約1分表示される場合があります。ログイン・新規登録画面の日英案内に従い、1〜2分待ってから一度だけ再読み込みしてください。連続再読み込みや異常URLの連続検証は避けます。この待機画面はアプリ起動前にRenderが表示するため、アプリ内のCSSでは変更できません。
+Render公式資料では、無料Webサービスは15分間受信がないと休止し、次回アクセスからの復帰に約1分かかります。ログイン・新規登録画面の日英案内に従い、1〜2分待ってから一度だけ再読み込みしてください。連続再読み込みや異常URLの連続検証は避けます。この待機画面はアプリ起動前にRenderが表示するため、アプリ内のCSSでは変更できません。公式確認先は[Render Free Web Services](https://render.com/docs/free)です。
 
 約1分の休止復帰は、共通完成基準の「20秒以内に操作可能」を満たしません。20秒以内の実測証拠またはホスティング方針の見直しが得られるまでは、製品完成や公開可能とは判定しません。
+
+Neon公式の現行FreeプランはTime Travel／復元履歴が最大6時間相当です。実際の本番プランと復元設定をNeon画面で確認するまで、削除前の復旧点として利用できるとは判断しません。確認先は[Neon Pricing](https://neon.com/pricing)と[Neon Project Settings](https://neon.com/docs/manage/projects)です。
 
 ## セキュリティ方針
 

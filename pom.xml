@@ -12,7 +12,7 @@
     <groupId>com.example</groupId>
     <artifactId>myapp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ありがとう日記</name>
+    <name>奥山貴希のありがとう日記</name>
     <description>感謝を記録する日記アプリ</description>
     <properties>
         <java.version>21</java.version>

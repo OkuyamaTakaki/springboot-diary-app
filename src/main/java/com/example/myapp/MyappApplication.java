@@ -15,7 +15,7 @@ public class MyappApplication {
      * @param args コマンドライン引数
      */
     public static void main(final String[] args) {
-        log.info("ありがとう日記を起動します。");
+        log.info("奥山貴希のありがとう日記を起動します。");
         SpringApplication.run(MyappApplication.class, args);
     }
 }

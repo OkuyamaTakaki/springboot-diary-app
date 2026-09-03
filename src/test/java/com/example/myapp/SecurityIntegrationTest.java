@@ -100,7 +100,7 @@ class SecurityIntegrationTest {
     void languageSwitchRendersEnglishAndSavesTheChoice() throws Exception {
         mockMvc.perform(get("/login").param("lang", "en"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Gratitude Diary")))
+                .andExpect(content().string(containsString("Takaki Okuyama’s Gratitude Diary")))
                 .andExpect(content().string(containsString("The first load may take")))
                 .andExpect(content().string(containsString("Create an account")))
                 .andExpect(cookie().value("diary-language", "en"));
@@ -110,7 +110,7 @@ class SecurityIntegrationTest {
     void unsupportedLanguageFallsBackToJapaneseAndRepairsTheCookie() throws Exception {
         mockMvc.perform(get("/login").param("lang", "fr"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("ありがとう日記")))
+                .andExpect(content().string(containsString("奥山貴希のありがとう日記")))
                 .andExpect(content().string(containsString("初回表示に時間がかかる")))
                 .andExpect(content().string(containsString("新規登録はこちら")))
                 .andExpect(cookie().value("diary-language", "ja"));
