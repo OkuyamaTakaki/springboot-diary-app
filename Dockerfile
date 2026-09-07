@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:25-jdk AS build
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN chmod +x mvnw && ./mvnw clean verify \
     && java -Djarmode=tools -jar target/myapp-0.0.1-SNAPSHOT.jar extract \
         --destination /app/extracted --application-filename app.jar
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:25-jre
 
 WORKDIR /app
 
