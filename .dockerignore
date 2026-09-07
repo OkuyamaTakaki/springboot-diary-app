@@ -1,0 +1,21 @@
+# ビルドに必要な入力だけを許可。実DB・秘密値・Git履歴・旧生成物は送らない。
+**
+!Dockerfile
+!.dockerignore
+!pom.xml
+!mvnw
+!.mvn/
+!.mvn/wrapper/
+!.mvn/wrapper/maven-wrapper.properties
+!src/
+!src/**
+
+# ソース配下でもローカル秘密情報と生成物は除外する。
+**/.env
+**/.env.*
+**/*.key
+**/*.pem
+**/*.p12
+**/*.jks
+**/*.log
+**/target/
